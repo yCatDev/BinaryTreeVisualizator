@@ -11,6 +11,7 @@ namespace BinaryTreeVisualizator
         protected override void Initialize()
         {
             base.Initialize();
+            Scene = new BlankScene();
         }
     }
 }
