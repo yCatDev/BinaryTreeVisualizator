@@ -357,12 +357,12 @@ namespace BinaryTreeVisualizator.Tree
         }
 
 
-        public void Draw(Action<int,int,T> onDraw)
+        public void Draw(Action<int,int,T> onDraw, int x = 0)
         {
-            DrawElement(onDraw,15, 0, _head);
+            DrawElement(onDraw,x, 0, _head);
         }
         
-        public void DrawElement(Action<int,int,T> onDraw, int x, int y, BinaryTreeNode<T> node, int delta = 0)
+        private void DrawElement(Action<int,int,T> onDraw, int x, int y, BinaryTreeNode<T> node, int delta = 0)
         {
             if (node != null)
             {
@@ -371,7 +371,6 @@ namespace BinaryTreeVisualizator.Tree
                 DrawElement(onDraw, x-delta, y + 3, node.Left, delta / 2);
                 DrawElement(onDraw, x+delta, y + 3, node.Right,delta/2);
             }
-            
         }
         
         

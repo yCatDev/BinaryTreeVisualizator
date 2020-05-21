@@ -64,12 +64,27 @@ namespace BinaryTreeVisualizator
         private void OnCommandEnter(TextField field)
         {
             var cmd = field.GetText().Split(' ');
-            if (cmd[0].ToLower() == "add")
+            switch (cmd[0].ToLower())
             {
-                AddElement(int.Parse(cmd[1]));
+                case "add":
+                    AddElement(int.Parse(cmd[1]));
+                    break;
+                case "remove":
+                    RemoveElement(int.Parse(cmd[1]));
+                    break;
             }
         }
-        
+
+        private void RemoveElement(int value)
+        {
+            if (!_tree.Contains(value)) return;
+            
+            _tree.Remove(value);
+            _treeElements[value].Destroy();
+            _treeElements.Remove(value);
+            RebuildTree();
+        }
+
         public override void Initialize()
         {
             base.Initialize();
@@ -87,40 +102,13 @@ namespace BinaryTreeVisualizator
         private void RebuildTree()
         {
             Entity tmp;
-            var pos = new Vector2();
-            int y = 0;
-            int lastSide = 0;
-            //Console.WriteLine("New");
-            var arr = new List<int>();
-            _tree.PreOrderTraversal((x) => arr.Add(x));
 
-            var offset = arr.Count*250;
-            var prevLPoint = Vector2.Zero;
-            var prevRPoint = Vector2.Zero;
-            _tree.ExtendedPreOrderTraversal((x, c, s) =>
+            _tree.Draw((x, y, v) =>
             {
-                offset /= 2;
-                tmp = !_treeElements.ContainsKey(x) ? CreateElement(x) : _treeElements[x];
-                switch (s)
-                {
-                    case Side.Left:
-                        tmp.LocalPosition  = new Vector2(-100-offset/2f, 100*c);
-                        break;
-                    case Side.Right:
-                        tmp.LocalPosition  = new Vector2(100+prevRPoint.X-offset/2f, 100*c);
-                        break;
-                    case Side.Root:
-                        tmp.LocalPosition = new Vector2(0, 0);
-                        break;
-                }
-
-                //Console.WriteLine($"{x} {c} {s}: {offset} \n");
-                //Console.WriteLine(Environment.NewLine);
-                
-                //lastSide = s;
-            });
-            Console.Clear();
-            _tree.PrintTree(15,0, _tree.GetNode());
+                tmp = !_treeElements.ContainsKey(v) ? CreateElement(v) : _treeElements[v];
+                tmp.LocalPosition = new Vector2(x*50, y*50);
+            }, _tree.Count);
+            _domain.Position = new Vector2(Screen.Width/2f-(_tree.Count*50), Screen.Height/2f);
         }
 
         private Entity CreateElement(int val)
