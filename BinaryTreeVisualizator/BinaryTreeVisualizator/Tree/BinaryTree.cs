@@ -15,19 +15,21 @@ namespace BinaryTreeVisualizator.Tree
             if (_head == null)
             {
                 _head = new BinaryTreeNode<T>(value);
+                _head.Index = 0;
+                _head.Side = Side.Root;
             }
             // Случай 2: Дерево не пустое => 
             // ищем правильное место для вставки.
             else
             {
-                AddTo(_head, value);
+                AddTo(_head, value, 0);
             }
 
             _count++;
         }
 
-// Рекурсивная ставка.
-        private void AddTo(BinaryTreeNode<T> node, T value)
+        // Рекурсивная ставка.
+        private void AddTo(BinaryTreeNode<T> node, T value, int depth)
         {
             // Случай 1: Вставляемое значение меньше значения узла
             if (value.CompareTo(node.Value) < 0)
@@ -35,12 +37,12 @@ namespace BinaryTreeVisualizator.Tree
                 // Если нет левого поддерева, добавляем значение в левого ребенка,
                 if (node.Left == null)
                 {
-                    node.Left = new BinaryTreeNode<T>(value);
+                    node.Left = new BinaryTreeNode<T>(value) {Side = Side.Left, Index = depth+1};
                 }
                 else
                 {
                     // в противном случае повторяем для левого поддерева.
-                    AddTo(node.Left, value);
+                    AddTo(node.Left, value, ++depth);
                 }
             }
             // Случай 2: Вставляемое значение больше или равно значению узла.
@@ -49,12 +51,12 @@ namespace BinaryTreeVisualizator.Tree
                 // Если нет правого поддерева, добавляем значение в правого ребенка,
                 if (node.Right == null)
                 {
-                    node.Right = new BinaryTreeNode<T>(value);
+                    node.Right = new BinaryTreeNode<T>(value) {Side = Side.Right, Index = depth+1};
                 }
                 else
                 {
                     // в противном случае повторяем для правого поддерева.
-                    AddTo(node.Right, value);
+                    AddTo(node.Right, value, ++depth);
                 }
             }
         }
@@ -205,6 +207,30 @@ namespace BinaryTreeVisualizator.Tree
         }
 
 #region НЕ ЧИТАТЬ РЕАЛИЗАЦИЯ ОБХОДОВ ДЕРЕВА
+
+        private int counter = 0;
+        public void ExtendedPreOrderTraversal(Action<T, int, Side> action)
+        {
+            ExtendedPreOrderTraversal(action, _head);
+        }
+
+        private void ExtendedPreOrderTraversal(Action<T, int, Side> action, BinaryTreeNode<T> node)
+        {
+            if (node != null)
+            {
+                counter++;
+                action(node.Value, counter, node.Side);
+                ExtendedPreOrderTraversal(action, node.Left);
+                ExtendedPreOrderTraversal(action, node.Right);
+            }
+            else
+            {
+                counter--;
+                if (counter < 0)
+                    counter = 0;
+            }
+        }
+
         public void PreOrderTraversal(Action<T> action)
         {
             PreOrderTraversal(action, _head);
@@ -235,6 +261,7 @@ namespace BinaryTreeVisualizator.Tree
             }
         }
 
+        
         public void InOrderTraversal(Action<T> action)
         {
             InOrderTraversal(action, _head);
@@ -328,5 +355,29 @@ namespace BinaryTreeVisualizator.Tree
         {
             get { return _count; }
         }
+
+
+        public void Draw(Action<int,int,T> onDraw)
+        {
+            DrawElement(onDraw,15, 0, _head);
+        }
+        
+        public void DrawElement(Action<int,int,T> onDraw, int x, int y, BinaryTreeNode<T> node, int delta = 0)
+        {
+            if (node != null)
+            {
+                if (delta == 0) delta = x/2;
+                onDraw(x, y, node.Value);
+                DrawElement(onDraw, x-delta, y + 3, node.Left, delta / 2);
+                DrawElement(onDraw, x+delta, y + 3, node.Right,delta/2);
+            }
+            
+        }
+        
+        
+
+        public BinaryTreeNode<T> GetNode() => _head;
+        public T GetRightValue() => _head.Right==null ?  default(T) : _head.Right.Value;
+
     }
 }

@@ -2,7 +2,14 @@
 
 namespace BinaryTreeVisualizator.Tree
 {
-    class BinaryTreeNode<T> : IComparable<T>
+    public enum Side
+    {
+        Left = -1,
+        Root = 0,
+        Right = 1
+    };
+    
+    public class BinaryTreeNode<T> : IComparable<T>
         where T : IComparable
     {
         public BinaryTreeNode(T value)
@@ -13,6 +20,8 @@ namespace BinaryTreeVisualizator.Tree
         public BinaryTreeNode<T> Left { get; set; }
         public BinaryTreeNode<T> Right { get; set; }
         public T Value { get; private set; }
+        public int Index {get; set; }
+        public Side Side { get; set; } 
  
         /// 
         /// Сравнивает текущий узел с данным.

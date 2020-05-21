@@ -56,13 +56,13 @@ namespace BinaryTreeVisualizator
         /// <param name="placeholder">Placeholder text</param>
         /// <param name="onInput">On input event handler</param>
         /// <returns>Element</returns>
-        public TextField CreateInputField(Table t, string placeholder, Action<TextField,string> onInput = null)
+        public TextField CreateInputField(Table t, string placeholder, Action<TextField> onEntered = null)
         {
             var input = new TextField(placeholder, _skin.Skin.Get<TextFieldStyle>("inputfield"));
             //input.SetStyle(_skin.Skin.Get<TextFieldStyle>("inputfield"));
-            input.OnTextChanged += (field, s) =>
+            input.OnEnterPressed += field =>
             {
-                onInput?.Invoke(field, s);
+                onEntered?.Invoke(field);
             };
             t.Add( input ).SetMinWidth( Screen.Width ).SetMinHeight( 50 );
             input.SetAlignment(Align.Center);

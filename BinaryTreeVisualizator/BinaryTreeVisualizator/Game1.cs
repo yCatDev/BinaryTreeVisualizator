@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using BinaryTreeVisualizator.Tree;
 using Microsoft.Xna.Framework;
 using Nez;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,6 +12,8 @@ namespace BinaryTreeVisualizator
         protected override void Initialize()
         {
             base.Initialize();
+           
+            DefaultSamplerState = SamplerState.LinearClamp;
             Scene = new BlankScene();
         }
     }
