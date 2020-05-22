@@ -28,19 +28,19 @@ namespace BinaryTreeVisualizator
         {
             if (_up.IsDown)
             {
-                Entity.Position = new Vector2(Entity.Position.X, Entity.Position.Y - 1);
+                Entity.Position = new Vector2(Entity.Position.X, Entity.Position.Y - 10);
             }
             if (_down.IsDown)
             {
-                Entity.Position = new Vector2(Entity.Position.X, Entity.Position.Y + 1);
+                Entity.Position = new Vector2(Entity.Position.X, Entity.Position.Y + 10);
             }
             if (_left.IsDown)
             {
-                Entity.Position = new Vector2(Entity.Position.X - 1, Entity.Position.Y);
+                Entity.Position = new Vector2(Entity.Position.X - 10, Entity.Position.Y);
             }
             if (_right.IsDown)
             {
-                Entity.Position = new Vector2(Entity.Position.X + 1, Entity.Position.Y);
+                Entity.Position = new Vector2(Entity.Position.X + 10, Entity.Position.Y);
             }
         }
     }

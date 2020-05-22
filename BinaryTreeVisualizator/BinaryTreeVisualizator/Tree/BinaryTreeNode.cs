@@ -17,6 +17,7 @@ namespace BinaryTreeVisualizator.Tree
             Value = value;
         }
  
+        public BinaryTreeNode<T> Parent { get; set; }
         public BinaryTreeNode<T> Left { get; set; }
         public BinaryTreeNode<T> Right { get; set; }
         public T Value { get; private set; }

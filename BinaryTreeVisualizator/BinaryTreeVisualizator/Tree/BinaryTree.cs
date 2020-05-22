@@ -73,7 +73,7 @@ namespace BinaryTreeVisualizator.Tree
         /// не найдено, возвращает null. Также возвращает родителя найденного узла (или null)
         /// для использования в методе Remove.
         /// 
-        private BinaryTreeNode<T> FindWithParent(T value, out BinaryTreeNode<T> parent)
+        public BinaryTreeNode<T> FindWithParent(T value, out BinaryTreeNode<T> parent)
         {
             // Попробуем найти значение в дереве.
             BinaryTreeNode<T> current = _head;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using BinaryTreeVisualizator.Tree;
 using Microsoft.Xna.Framework;
@@ -25,6 +26,7 @@ namespace BinaryTreeVisualizator
         private Entity _domain;
         private BinaryTree<int> _tree;
         private Dictionary<int, Entity> _treeElements;
+        private List<Entity> _lines;
         
         public override void OnStart()
         {
@@ -52,12 +54,15 @@ namespace BinaryTreeVisualizator
 
             _tree = new BinaryTree<int>();
             _treeElements = new Dictionary<int, Entity>(10);
+            _lines = new List<Entity>();
             
             _domain = CreateEntity("Domain");
             _domain.AddComponent<ViewController>();
             _domain.Position = new Vector2(Screen.Width/2f, Screen.Height/2f);
+            
+            
+            
 
-          
 
         }
 
@@ -98,15 +103,38 @@ namespace BinaryTreeVisualizator
             _tree.Add(value);
             RebuildTree();
         }
-
+        LineRenderer line;
+        Entity lineEntity;
         private void RebuildTree()
         {
-            Entity tmp;
-
+            Entity current;
+            int prev = 0;
+            RemoveAllLines();
+        
+           
+            
             _tree.Draw((x, y, v) =>
             {
-                tmp = !_treeElements.ContainsKey(v) ? CreateElement(v) : _treeElements[v];
-                tmp.LocalPosition = new Vector2(x*50, y*50);
+                current = !_treeElements.ContainsKey(v) ? CreateElement(v) : _treeElements[v];
+                current.LocalPosition = new Vector2(x*50, y*50);
+                var elem = _tree.FindWithParent(v, out var parent);
+                if (elem != null && parent != null)
+                {
+                    lineEntity = CreateEntity("Line");
+
+                    line = lineEntity.AddComponent<LineRenderer>();
+                    line.SetUseWorldSpace(false);
+                    line.Entity.Position = new Vector2(Screen.Width / 2f, Screen.Height / 2f);
+                    line.Entity.Transform.Parent = _domain.Transform;
+                    line.Transform.LocalPosition = Vector2.Zero;
+                    
+                    line.AddPoint(_treeElements[v].LocalPosition, 10);
+                    line.AddPoint(_treeElements[parent.Value].LocalPosition, 10);
+                    Console.WriteLine($"{v} {parent.Value}");
+                    _lines.Add(lineEntity);
+                }
+
+                prev = v;
             }, _tree.Count);
             _domain.Position = new Vector2(Screen.Width/2f-(_tree.Count*50), Screen.Height/2f);
         }
@@ -121,9 +149,10 @@ namespace BinaryTreeVisualizator
             return element.Entity;
         }
 
-        private void DrawLines()
+        private void RemoveAllLines()
         {
-            
+            foreach (var element in _lines)
+                element.Destroy();
         }
         
     }
