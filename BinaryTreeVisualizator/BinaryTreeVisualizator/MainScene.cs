@@ -87,7 +87,7 @@ namespace BinaryTreeVisualizator
             _tree.Remove(value);
             _treeElements[value].Destroy();
             _treeElements.Remove(value);
-            RebuildTree();
+            RebuildTree(false);
         }
 
         public override void Initialize()
@@ -101,17 +101,16 @@ namespace BinaryTreeVisualizator
             if (_tree.Contains(value)) return;
             
             _tree.Add(value);
-            RebuildTree();
+            RebuildTree(true);
         }
         LineRenderer line;
         Entity lineEntity;
-        private void RebuildTree()
+        private void RebuildTree(bool afterAdding)
         {
             Entity current;
             RemoveAllLines();
-        
-           
-            
+
+
             _tree.Draw((x, y, v) =>
             {
                 current = !_treeElements.ContainsKey(v) ? CreateElement(v) : _treeElements[v];
@@ -120,7 +119,7 @@ namespace BinaryTreeVisualizator
                 if (elem != null && parent != null)
                 {
                     lineEntity = CreateEntity("Line", new Vector2(Screen.Width / 2f, Screen.Height / 2f));
-                    lineEntity.Transform.Parent = _domain.Transform;
+                   // lineEntity.Transform.Parent = _domain.Transform;
                     lineEntity.LocalPosition = Vector2.Zero;
                     line = lineEntity.AddComponent<LineRenderer>();
                     line.LayerDepth = 1;
@@ -128,9 +127,18 @@ namespace BinaryTreeVisualizator
                     //line.SetUseWorldSpace(false);
 
                     var from = _treeElements[v].Position;
-                    from.X -= 50;
                     var to = _treeElements[parent.Value].Position;
-                    to.X -= 50;
+                    if (afterAdding)
+                    {
+                        from.X -= 50;
+                        to.X -= 50;
+                    }
+                    else
+                    {
+                        from.X += 50;
+                        to.X += 50;
+                    }
+
                     line.AddPoint(from, 10);
                     line.AddPoint(to, 10);
                     Console.WriteLine($"{v} {parent.Value}");
@@ -154,7 +162,11 @@ namespace BinaryTreeVisualizator
         private void RemoveAllLines()
         {
             foreach (var element in _lines)
+            {
+                if (element.HasComponent<LineRenderer>())
+                    element.GetComponent<LineRenderer>().ClearPoints();
                 element.Destroy();
+            }
         }
 
         public override void Update()
