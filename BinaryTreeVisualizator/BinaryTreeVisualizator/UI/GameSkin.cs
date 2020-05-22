@@ -50,7 +50,7 @@ namespace BinaryTreeVisualizator
                 Selection = new PrimitiveDrawable(Color.Blue)
             });
             
-            Skin.Add("regular-button", TextButtonStyle.Create(Color.Black, new Color(61, 9, 85), new Color(61, 9, 107)));
+            Skin.Add("regular-button", TextButtonStyle.Create(Color.Gray, new Color(61, 9, 85), new Color(61, 9, 107)));
             
             
             var sliderStyle = SliderStyle.Create(Color.Yellow, new Color(61, 9, 107));

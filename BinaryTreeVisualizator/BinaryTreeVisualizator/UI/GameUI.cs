@@ -38,13 +38,14 @@ namespace BinaryTreeVisualizator
         {
             var button = new TextButton(label, _skin.Skin.Get<TextButtonStyle>("regular-button"));
             button.GetLabel().SetStyle(_skin.Skin.Get<LabelStyle>("label"));
+            button.GetLabel().SetAlignment(Align.Left);
             button.OnClicked += btn =>
             {
                 onClick(button);
                
                 
             };
-            t.Add( button ).SetMinWidth( 450 ).SetMinHeight( 100 );
+            t.Add( button ).SetMinWidth( 450 ).SetMinHeight( 100 ).SetAlign(Align.Left);
             
             return button;
         }
@@ -100,7 +101,7 @@ namespace BinaryTreeVisualizator
         public Label CreateTitleLabel(Table t, string text)
         {
             var label = new Label(text, _skin.Skin.Get<LabelStyle>("title-label"));
-            t.Add(label);
+            t.Add(label).SetAlign(Align.Left);;
             
             return label;
         }
@@ -116,7 +117,7 @@ namespace BinaryTreeVisualizator
             var label = new Label(text,
                 _skin.Skin.Get<LabelStyle>("label"));
             label.SetFontScale(fontScale);
-            t.Add(label);
+            t.Add(label).SetAlign(Align.Left);;
             
             return label;
         }

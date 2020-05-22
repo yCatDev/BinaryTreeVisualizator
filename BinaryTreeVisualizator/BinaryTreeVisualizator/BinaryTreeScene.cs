@@ -21,7 +21,7 @@ namespace BinaryTreeVisualizator
         }
     }
 
-    public class MainScene : Scene
+    public class BinaryTreeScene : Scene
     {
         private GameUIHelper _uiHelper;
         private Entity _domain;
@@ -49,14 +49,12 @@ namespace BinaryTreeVisualizator
             //_domain.AddComponent<ViewController>();
             _domain.Position = new Vector2(Screen.Width/2f, Screen.Height/2f);
             Camera.Entity.AddComponent<ViewController>();
-            
-            
-
-
         }
 
+        private bool _prevent = false;
         private void OnCommandEnter(TextField field)
         {
+            if (_prevent) return;
             var cmd = field.GetText().Split(' ');
             switch (cmd[0].ToLower())
             {
@@ -88,6 +86,11 @@ namespace BinaryTreeVisualizator
                         HighlightElement(int.Parse(cmd[1]));
                     else
                         field.SetTextForced("Not found");
+                    break;
+                
+                case "menu":
+                    Core.StartSceneTransition(new FadeTransition(() => new Menu()));
+                    _prevent = true;
                     break;
             }
         }

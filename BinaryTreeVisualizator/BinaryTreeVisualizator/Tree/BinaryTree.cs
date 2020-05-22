@@ -328,10 +328,7 @@ namespace BinaryTreeVisualizator.Tree
             _count = 0;
         }
 
-        public int Count
-        {
-            get { return _count; }
-        }
+        public int Count => _count;
 
 
         /// <summary>
@@ -358,55 +355,25 @@ namespace BinaryTreeVisualizator.Tree
         //В двоичном дереве поиска найти элемент, следующий за данным.
         public T FindNext(T val)
         {
-            //запись корневого элемента во временную переменную
-            BinaryTreeNode<T> temp = _head;
-            return FindNext(val, temp); //возврат результата функции поиска элемента среди дочерних
+            //Ищем элемент
+            var next = FindWithParent(val, out var parent);
+            //Идем вправо
+            if (next.Right != null)
+            {
+                //Проверяем в какую сторону идти
+                if (next.Right.Value.CompareTo(val) > 0 || next.Left == null)
+                    return next.Right.Value;
+            }
+            //если вправо не можем то идем либо в лево либо возвращаем значения поиска - ТуПиК
+            return next.Left != null ? next.Left.Value : next.Value;
         }
-
-        //функция поиска элемента среди дочерних
-        private T FindNext(T val, BinaryTreeNode<T> temp)
-        {
-            //Если узел хранит искомые данные и правое дерево не пустое,возвращаем специальную функцию поиска
-            if (val.CompareTo(temp.Value)==0 && temp.Right != null)
-            {
-                return Find(val, temp.Right);
-            }
-
-            //Если данные в узле больше искомых и правая ветвь левого поддерева не пустая, взвращаем результат поиска в левом поддереве
-            if (val.CompareTo(temp.Value)<0 && temp.Left?.Right != null)
-            {
-                return FindNext(val, temp.Left);
-            }
-            //если второе условие не выполняется, возвращаются данные с текущего узла
-            else if (val.CompareTo(temp.Value)<0)
-            {
-                return temp.Value;
-            }
-
-            //если данные в узле мень ше искомых и левая ветвь правого поддерева не пустая, возвращаем результат поиска в правом поддереве
-            if (val.CompareTo(temp.Value)>0 && temp.Right?.Left != null)
-            {
-                return FindNext(val, temp.Right);
-            }
-            //иначе возвращаем искомое значение
-            else
-            {
-                return val;
-            }
-        }
-
-        //специальная функция поиска
-        private T Find(T val, BinaryTreeNode<T> temp)
-        {
-            //если левая ветка не пустая, возвращаем результат поиска этой функции в ней
-            return temp.Left != null ? Find(val, temp.Left) : temp.Value;
-        }
-
+        
+        
         //В двоичном дереве поиска найти элемент, предшествующий данному.
         public T FindPrevious(T val)
         {
             //запись корневого элемента во временную переменную
-            BinaryTreeNode<T> temp = _head;
+            var temp = _head;
             //возврат результата функции поиска элемента среди дочерних
             return FindPrevious(val, temp);
         }
