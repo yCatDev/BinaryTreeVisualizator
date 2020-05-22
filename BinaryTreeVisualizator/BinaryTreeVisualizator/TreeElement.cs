@@ -29,7 +29,7 @@ namespace BinaryTreeVisualizator
             
             _texture = Entity.Scene.Content.Load<Texture2D>(Content.Circle);
             _spriteRenderer = Entity.AddComponent(new SpriteRenderer(_texture));
-            _spriteRenderer.RenderLayer = 0;
+            _spriteRenderer.RenderLayer = 1;
             _textLabel = Entity.Scene.CreateEntity("TextLabel");
             _textLabel.Parent = Entity.Transform;
 
