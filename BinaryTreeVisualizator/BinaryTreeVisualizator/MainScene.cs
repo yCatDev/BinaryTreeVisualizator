@@ -61,14 +61,46 @@ namespace BinaryTreeVisualizator
             switch (cmd[0].ToLower())
             {
                 case "add":
+                    if (!IsDigitsOnly(cmd[1])) return;
                     AddElement(int.Parse(cmd[1]));
                     break;
                 case "remove":
+                    if (!IsDigitsOnly(cmd[1])) return;
                     RemoveElement(int.Parse(cmd[1]));
                     break;
+                case "clear":
+                    ClearTree();
+                    break;
+                case "count":
+                    field.SetTextForced($"In tree {_tree.Count} elements");
+                    break;
+                    
             }
         }
 
+        private void ClearTree()
+        {
+            _tree.Clear();
+            foreach (var item in _treeElements)
+            {
+                _treeElements[item.Key].Transform.TweenScaleTo(Vector2.Zero, 0.5f).Start();
+                _treeElements[item.Key].Destroy(1);
+                _treeElements.Remove(item.Key);
+            }
+            _treeElements.Clear();
+            RebuildTree(false);
+        }
+        
+        bool IsDigitsOnly(string str)
+        {
+            foreach (char c in str)
+            {
+                if (c < '0' || c > '9')
+                    return false;
+            }
+
+            return true;
+        }
         private void RemoveElement(int value)
         {
             if (!_tree.Contains(value)) return;
