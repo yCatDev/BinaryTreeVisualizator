@@ -561,5 +561,56 @@ namespace BinaryTreeVisualizator.Tree
         {
             return GetEnumerator();
         }
+        
+         //В двоичном дереве поиска найти элемент, следующий за данным.
+        public T FindNext(T val)
+        {
+            //Ищем элемент
+            var next = FindWithParent(val, out var parent);
+            //Идем вправо
+            if (next.Right != null)
+            {
+                //Проверяем в какую сторону идти
+                if (next.Right.Value.CompareTo(val) > 0 || next.Left == null)
+                    return next.Right.Value;
+            }
+            //если вправо не можем то идем либо в лево либо возвращаем значения поиска - ТуПиК
+            return next.Left != null ? next.Left.Value : next.Value;
+        }
+        
+        
+        //В двоичном дереве поиска найти элемент, предшествующий данному.
+        public T FindPrevious(T val)
+        {
+            //запись корневого элемента во временную переменную
+            var temp = Head;
+            //возврат результата функции поиска элемента среди дочерних
+            return FindPrevious(val, temp);
+        }
+
+        //функция поиска элемента среди дочерних
+        private T FindPrevious(T val, AVLTreeNode<T> temp)
+        {
+            //Если пытаемся достать значение выше головы возвращаем то что хочем
+            if (temp == null) return val;
+            
+            //если данные в правом или левом дереве равны искомым, возвращаем данные в текущем узле
+            if ((temp.Left!=null && val.CompareTo(temp.Left.Value)==0) 
+                || (temp.Right!=null && val.CompareTo(temp.Right.Value)==0))
+            {
+                return temp.Value;
+            }
+            //если искомые данные меньше днанных в текущем узле, возвращаем результат этой функции для левого поддерева
+            else if (val.CompareTo(temp.Value)<0)
+            {
+                return FindPrevious(val, temp.Left);
+            }
+            //в противном случае возвращаем результат этой функции для правого поддерева
+            else
+            {
+                return FindPrevious(val, temp.Right);
+            }
+        }
+        
     }
 }

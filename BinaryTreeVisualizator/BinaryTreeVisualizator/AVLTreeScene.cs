@@ -49,6 +49,7 @@ namespace BinaryTreeVisualizator
 
         private void OnCommandEnter(TextField field)
         {
+            if (_prevent) return;
             var cmd = field.GetText().Split(' ');
             switch (cmd[0].ToLower())
             {
@@ -66,12 +67,25 @@ namespace BinaryTreeVisualizator
                 case "count":
                     field.SetTextForced($"In tree {_tree.Count} elements");
                     break;
+                case "find-next":
+                    if (!IsDigitsOnly(cmd[1])) return;
+                    HighlightElement(_tree.FindNext(int.Parse(cmd[1])));
+                    break;
+                case "find-prev":
+                    if (!IsDigitsOnly(cmd[1])) return;
+                    HighlightElement(_tree.FindPrevious(int.Parse(cmd[1])));
+                    break;
                 case "search":
                     if (!IsDigitsOnly(cmd[1])) return;
                     if (_tree.Contains(int.Parse(cmd[1])))
                         HighlightElement(int.Parse(cmd[1]));
                     else
                         field.SetTextForced("Not found");
+                    break;
+                
+                case "menu":
+                    Core.StartSceneTransition(new FadeTransition(() => new Menu()));
+                    _prevent = true;
                     break;
             }
         }
@@ -131,6 +145,8 @@ namespace BinaryTreeVisualizator
         }
         LineRenderer line;
         Entity lineEntity;
+        private bool _prevent;
+
         private void RebuildTree(bool afterAdding)
         {
             Entity current;
