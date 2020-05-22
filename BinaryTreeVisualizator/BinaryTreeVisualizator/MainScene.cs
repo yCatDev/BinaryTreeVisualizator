@@ -126,6 +126,7 @@ namespace BinaryTreeVisualizator
                     lineEntity.LocalPosition = Vector2.Zero;
                     line = lineEntity.AddComponent<LineRenderer>();
                     line.LayerDepth = 1;
+                    line.RenderLayer = 999;
 
                     //line.SetUseWorldSpace(false);
 
@@ -135,6 +136,9 @@ namespace BinaryTreeVisualizator
 
                     line.AddPoint(from, 3);
                     line.AddPoint(to, 3);
+
+                    //line.SetStartEndColors(new Color(61, 9, 107),new Color(61, 9, 107));
+                   
                     //Console.WriteLine($"{v} {parent.Value}");
                     _lines.Add(lineEntity);
                 }

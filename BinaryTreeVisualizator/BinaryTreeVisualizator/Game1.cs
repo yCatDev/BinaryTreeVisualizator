@@ -12,7 +12,7 @@ namespace BinaryTreeVisualizator
         protected override void Initialize()
         {
             base.Initialize();
-           
+           Screen.SetSize(1280, 800);
             DefaultSamplerState = SamplerState.LinearClamp;
             Scene = new BlankScene();
         }
