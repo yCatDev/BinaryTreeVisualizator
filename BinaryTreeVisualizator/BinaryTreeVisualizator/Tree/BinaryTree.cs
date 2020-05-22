@@ -258,8 +258,6 @@ namespace BinaryTreeVisualizator.Tree
 
         public IEnumerator<T> InOrderTraversal()
         {
-            // Это нерекурсивный алгоритм.
-            // Он использует стек для того, чтобы избежать рекурсии.
             if (_head != null)
             {
                 // Стек для сохранения пропущенных узлов.
@@ -346,9 +344,9 @@ namespace BinaryTreeVisualizator.Tree
             if (node != null)
             {
                 if (delta == 0) delta = x / 2;
-                onDraw(x, y, node.Value);
-                DrawElement(onDraw, x - delta, y + 3, node.Left, delta / 2);
-                DrawElement(onDraw, x + delta, y + 3, node.Right, delta / 2);
+                onDraw(x, y, node.Value); //Идем в корень
+                DrawElement(onDraw, x - delta, y + 3, node.Left, delta / 2); //Влево
+                DrawElement(onDraw, x + delta, y + 3, node.Right, delta / 2); //Вправо
             }
         }
         

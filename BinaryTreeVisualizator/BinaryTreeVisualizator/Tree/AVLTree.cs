@@ -228,15 +228,14 @@ namespace BinaryTreeVisualizator.Tree
             {
                 AddTo(Head, value);
             }
-            Head.Balance();
+            //Head.Balance();
             Count++;
         }
 
         // Алгоритм рекурсивного добавления нового узла в дерево.
         private void AddTo(AVLTreeNode<T> node, T value)
         {
-            if (value.CompareTo(node.Value) < 0
-            ) //Добавление нового узла в дерево. Если значение добавлемого узла меньше чем значение текущего узла.
+            if (value.CompareTo(node.Value) < 0) //Добавление нового узла в дерево. Если значение добавлемого узла меньше чем значение текущего узла.
             {
                 if (node.Left == null) //Создание левого узла, если его нет.
                 {
@@ -246,6 +245,7 @@ namespace BinaryTreeVisualizator.Tree
                 {
                     // Переходим к следующему левому узлу
                     AddTo(node.Left, value);
+                   
                 }
             }
             else // Если добавлемое значение больше или равно текущему значению.
@@ -260,6 +260,8 @@ namespace BinaryTreeVisualizator.Tree
                     AddTo(node.Right, value);
                 }
             }
+
+            node.Balance();
         }
 
         public bool Contains(T value)
@@ -423,10 +425,7 @@ namespace BinaryTreeVisualizator.Tree
             }
             else
             {
-                if (Head != null)
-                {
-                    Head.Balance();
-                }
+                Head?.Balance();
             }
 
             return true;
