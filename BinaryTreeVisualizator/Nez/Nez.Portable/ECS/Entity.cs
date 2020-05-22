@@ -543,5 +543,7 @@ namespace Nez
 		{
 			return string.Format("[Entity: name: {0}, tag: {1}, enabled: {2}, depth: {3}]", Name, Tag, Enabled, UpdateOrder);
 		}
+
+		
 	}
 }

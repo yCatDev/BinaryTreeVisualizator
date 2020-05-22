@@ -56,9 +56,9 @@ namespace BinaryTreeVisualizator
  
             var pos =(Input.MousePosition - dragOrigin);
             pos.Ceiling();
-            pos.X = Math.Clamp(pos.X, -170, 170);
-            pos.Y = Math.Clamp(pos.Y, -170, 170);
-            Console.WriteLine(pos);
+            pos.X = Math.Clamp(pos.X, -220, 220);
+            pos.Y = Math.Clamp(pos.Y, -220, 220);
+            //Console.WriteLine(pos);
             var move = -new Vector2(pos.X * 0.01f, pos.Y * 0.01f);
             //move.Normalize();
             Transform.Position += move;

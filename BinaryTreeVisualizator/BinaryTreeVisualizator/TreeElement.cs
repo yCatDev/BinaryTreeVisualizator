@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections;
+using System.Drawing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nez;
@@ -17,7 +18,8 @@ namespace BinaryTreeVisualizator
 
         private Entity _textLabel;
         private TextComponent _textComponent;
-        
+        private SpriteOutlineRenderer _outlineRenderer;
+
         public TreeElement(int value)
         {
             _value = value.ToString();
@@ -34,11 +36,13 @@ namespace BinaryTreeVisualizator
             _spriteRenderer.Transform.SetScale(0.75f);
             _textLabel = Entity.Scene.CreateEntity("TextLabel");
             _textLabel.Parent = Entity.Transform;
-            Entity.AddComponent(new SpriteOutlineRenderer(_spriteRenderer)
+
+            _outlineRenderer = Entity.AddComponent(new SpriteOutlineRenderer(_spriteRenderer)
             {
-                OutlineColor =  new Color(61,9,107),
+                OutlineColor = new Color(61, 9, 107),
                 OutlineWidth = 10
-            }).RenderLayer = 9999;
+            });
+            _outlineRenderer.RenderLayer = 9999;
 
             _textComponent = _textLabel.AddComponent<TextComponent>();
             _textComponent.SetFont(Entity.Scene.Content.Load<IFont>(Content.DefaultTitleFont));
@@ -55,7 +59,19 @@ namespace BinaryTreeVisualizator
 
 
         }
+        public void Highlight()
+        {
+            Core.StartCoroutine(HighlightIt());
+        }
 
+        private IEnumerator HighlightIt()
+        {
+            var col = _outlineRenderer.OutlineColor;
+            _outlineRenderer.OutlineColor = Color.Red;
+            yield return Coroutine.WaitForSeconds(3);
+            _outlineRenderer.OutlineColor = col;
+        }
+        
         public void Update()
         {
             

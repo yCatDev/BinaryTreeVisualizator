@@ -74,10 +74,30 @@ namespace BinaryTreeVisualizator
                 case "count":
                     field.SetTextForced($"In tree {_tree.Count} elements");
                     break;
-                    
+                case "find-next":
+                    if (!IsDigitsOnly(cmd[1])) return;
+                    HighlightElement(_tree.FindNext(int.Parse(cmd[1])));
+                    break;
+                case "find-prev":
+                    if (!IsDigitsOnly(cmd[1])) return;
+                    HighlightElement(_tree.FindPrevious(int.Parse(cmd[1])));
+                    break;
+                case "search":
+                    if (!IsDigitsOnly(cmd[1])) return;
+                    if (_tree.Contains(int.Parse(cmd[1])))
+                        HighlightElement(int.Parse(cmd[1]));
+                    else
+                        field.SetTextForced("Not found");
+                    break;
             }
         }
 
+        public void HighlightElement(int value)
+        {
+            if (_treeElements.ContainsKey(value))
+                _treeElements[value].GetComponent<TreeElement>().Highlight();
+        }
+        
         private void ClearTree()
         {
             _tree.Clear();

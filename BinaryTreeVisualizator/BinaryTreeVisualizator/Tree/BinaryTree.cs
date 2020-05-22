@@ -15,8 +15,6 @@ namespace BinaryTreeVisualizator.Tree
             if (_head == null)
             {
                 _head = new BinaryTreeNode<T>(value);
-                _head.Index = 0;
-                _head.Side = Side.Root;
             }
             // Случай 2: Дерево не пустое => 
             // ищем правильное место для вставки.
@@ -37,7 +35,7 @@ namespace BinaryTreeVisualizator.Tree
                 // Если нет левого поддерева, добавляем значение в левого ребенка,
                 if (node.Left == null)
                 {
-                    node.Left = new BinaryTreeNode<T>(value) {Side = Side.Left, Index = depth+1};
+                    node.Left = new BinaryTreeNode<T>(value);
                 }
                 else
                 {
@@ -51,7 +49,7 @@ namespace BinaryTreeVisualizator.Tree
                 // Если нет правого поддерева, добавляем значение в правого ребенка,
                 if (node.Right == null)
                 {
-                    node.Right = new BinaryTreeNode<T>(value) {Side = Side.Right, Index = depth+1};
+                    node.Right = new BinaryTreeNode<T>(value);
                 }
                 else
                 {
@@ -206,30 +204,7 @@ namespace BinaryTreeVisualizator.Tree
             return true;
         }
 
-#region НЕ ЧИТАТЬ РЕАЛИЗАЦИЯ ОБХОДОВ ДЕРЕВА
-
-        private int counter = 0;
-        public void ExtendedPreOrderTraversal(Action<T, int, Side> action)
-        {
-            ExtendedPreOrderTraversal(action, _head);
-        }
-
-        private void ExtendedPreOrderTraversal(Action<T, int, Side> action, BinaryTreeNode<T> node)
-        {
-            if (node != null)
-            {
-                counter++;
-                action(node.Value, counter, node.Side);
-                ExtendedPreOrderTraversal(action, node.Left);
-                ExtendedPreOrderTraversal(action, node.Right);
-            }
-            else
-            {
-                counter--;
-                if (counter < 0)
-                    counter = 0;
-            }
-        }
+        #region Old methods
 
         public void PreOrderTraversal(Action<T> action)
         {
@@ -261,7 +236,7 @@ namespace BinaryTreeVisualizator.Tree
             }
         }
 
-        
+
         public void InOrderTraversal(Action<T> action)
         {
             InOrderTraversal(action, _head);
@@ -278,6 +253,8 @@ namespace BinaryTreeVisualizator.Tree
                 InOrderTraversal(action, node.Right);
             }
         }
+
+        #endregion
 
         public IEnumerator<T> InOrderTraversal()
         {
@@ -333,7 +310,7 @@ namespace BinaryTreeVisualizator.Tree
                 }
             }
         }
-#endregion
+
 
         public IEnumerator<T> GetEnumerator()
         {
@@ -357,26 +334,105 @@ namespace BinaryTreeVisualizator.Tree
         }
 
 
-        public void Draw(Action<int,int,T> onDraw, int x = 0)
+        /// <summary>
+        /// Реализация префиксного обхода для отрисовки
+        /// </summary>
+        /// <param name="onDraw"></param>
+        /// <param name="x"></param>
+        public void Draw(Action<int, int, T> onDraw, int x = 0)
         {
-            DrawElement(onDraw,x, 0, _head);
+            DrawElement(onDraw, x, 0, _head);
         }
-        
-        private void DrawElement(Action<int,int,T> onDraw, int x, int y, BinaryTreeNode<T> node, int delta = 0)
+
+        private void DrawElement(Action<int, int, T> onDraw, int x, int y, BinaryTreeNode<T> node, int delta = 0)
         {
             if (node != null)
             {
-                if (delta == 0) delta = x/2;
+                if (delta == 0) delta = x / 2;
                 onDraw(x, y, node.Value);
-                DrawElement(onDraw, x-delta, y + 3, node.Left, delta / 2);
-                DrawElement(onDraw, x+delta, y + 3, node.Right,delta/2);
+                DrawElement(onDraw, x - delta, y + 3, node.Left, delta / 2);
+                DrawElement(onDraw, x + delta, y + 3, node.Right, delta / 2);
             }
         }
         
-        
+        //В двоичном дереве поиска найти элемент, следующий за данным.
+        public T FindNext(T val)
+        {
+            //запись корневого элемента во временную переменную
+            BinaryTreeNode<T> temp = _head;
+            return FindNext(val, temp); //возврат результата функции поиска элемента среди дочерних
+        }
 
-        public BinaryTreeNode<T> GetNode() => _head;
-        public T GetRightValue() => _head.Right==null ?  default(T) : _head.Right.Value;
+        //функция поиска элемента среди дочерних
+        private T FindNext(T val, BinaryTreeNode<T> temp)
+        {
+            //Если узел хранит искомые данные и правое дерево не пустое,возвращаем специальную функцию поиска
+            if (val.CompareTo(temp.Value)==0 && temp.Right != null)
+            {
+                return Find(val, temp.Right);
+            }
 
+            //Если данные в узле больше искомых и правая ветвь левого поддерева не пустая, взвращаем результат поиска в левом поддереве
+            if (val.CompareTo(temp.Value)<0 && temp.Left?.Right != null)
+            {
+                return FindNext(val, temp.Left);
+            }
+            //если второе условие не выполняется, возвращаются данные с текущего узла
+            else if (val.CompareTo(temp.Value)<0)
+            {
+                return temp.Value;
+            }
+
+            //если данные в узле мень ше искомых и левая ветвь правого поддерева не пустая, возвращаем результат поиска в правом поддереве
+            if (val.CompareTo(temp.Value)>0 && temp.Right?.Left != null)
+            {
+                return FindNext(val, temp.Right);
+            }
+            //иначе возвращаем искомое значение
+            else
+            {
+                return val;
+            }
+        }
+
+        //специальная функция поиска
+        private T Find(T val, BinaryTreeNode<T> temp)
+        {
+            //если левая ветка не пустая, возвращаем результат поиска этой функции в ней
+            return temp.Left != null ? Find(val, temp.Left) : temp.Value;
+        }
+
+        //В двоичном дереве поиска найти элемент, предшествующий данному.
+        public T FindPrevious(T val)
+        {
+            //запись корневого элемента во временную переменную
+            BinaryTreeNode<T> temp = _head;
+            //возврат результата функции поиска элемента среди дочерних
+            return FindPrevious(val, temp);
+        }
+
+        //функция поиска элемента среди дочерних
+        private T FindPrevious(T val, BinaryTreeNode<T> temp)
+        {
+            //Если пытаемся достать значение выше головы возвращаем то что хочем
+            if (temp == null) return val;
+            
+            //если данные в правом или левом дереве равны искомым, возвращаем данные в текущем узле
+            if ((temp.Left!=null && val.CompareTo(temp.Left.Value)==0) 
+                || (temp.Right!=null && val.CompareTo(temp.Right.Value)==0))
+            {
+                return temp.Value;
+            }
+            //если искомые данные меньше днанных в текущем узле, возвращаем результат этой функции для левого поддерева
+            else if (val.CompareTo(temp.Value)<0)
+            {
+                return FindPrevious(val, temp.Left);
+            }
+            //в противном случае возвращаем результат этой функции для правого поддерева
+            else
+            {
+                return FindPrevious(val, temp.Right);
+            }
+        }
     }
 }
