@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
@@ -292,6 +293,19 @@ namespace Nez
 				var child = Transform.GetChild(i);
 				child.Entity.Destroy();
 			}
+		}
+		/// <summary>
+		/// removes the Entity from the scene and destroys all children
+		/// </summary>
+		public void Destroy(float delay)
+		{
+			Core.StartCoroutine(DestroyByDelay(delay));
+		}
+
+		private IEnumerator DestroyByDelay(float delay)
+		{
+			yield return Coroutine.WaitForSeconds(delay);
+			Destroy();
 		}
 
 		/// <summary>

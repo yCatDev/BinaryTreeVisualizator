@@ -6,6 +6,7 @@ using System.Threading;
 using BinaryTreeVisualizator.Tree;
 using Microsoft.Xna.Framework;
 using Nez;
+using Nez.Tweens;
 using Nez.UI;
 
 namespace BinaryTreeVisualizator
@@ -85,7 +86,8 @@ namespace BinaryTreeVisualizator
             if (!_tree.Contains(value)) return;
             
             _tree.Remove(value);
-            _treeElements[value].Destroy();
+            _treeElements[value].Transform.TweenScaleTo(Vector2.Zero, 0.5f).Start();
+            _treeElements[value].Destroy(1);
             _treeElements.Remove(value);
             RebuildTree(false);
         }
@@ -114,41 +116,42 @@ namespace BinaryTreeVisualizator
             _tree.Draw((x, y, v) =>
             {
                 current = !_treeElements.ContainsKey(v) ? CreateElement(v) : _treeElements[v];
-                current.LocalPosition = new Vector2(x*50, y*50);
-                var elem = _tree.FindWithParent(v, out var parent);
-                if (elem != null && parent != null)
-                {
-                    lineEntity = CreateEntity("Line", new Vector2(Screen.Width / 2f, Screen.Height / 2f));
-                   // lineEntity.Transform.Parent = _domain.Transform;
-                    lineEntity.LocalPosition = Vector2.Zero;
-                    line = lineEntity.AddComponent<LineRenderer>();
-                    line.LayerDepth = 1;
-                    
-                    //line.SetUseWorldSpace(false);
-
-                    var from = _treeElements[v].Position;
-                    var to = _treeElements[parent.Value].Position;
-                    if (afterAdding)
-                    {
-                        from.X -= 50;
-                        to.X -= 50;
-                    }
-                    else
-                    {
-                        from.X += 50;
-                        to.X += 50;
-                    }
-
-                    line.AddPoint(from, 10);
-                    line.AddPoint(to, 10);
-                    Console.WriteLine($"{v} {parent.Value}");
-                    _lines.Add(lineEntity);
-                }
-                
+                //current.LocalPosition = new Vector2(x*50, y*50);
+                current.Transform.TweenLocalPositionTo( new Vector2(x*50, y*50)).Start();
             }, _tree.Count);
+
+            Core.StartCoroutine(DrawAllLines(afterAdding));
             _domain.Position = new Vector2(Screen.Width/2f-(_tree.Count*50), Screen.Height/2f);
         }
 
+        private IEnumerator DrawAllLines(bool afterAdding)
+        {
+            yield return Coroutine.WaitForSeconds(0.5f);
+            foreach (var item in _treeElements)
+            {
+                var elem = _tree.FindWithParent(item.Key, out var parent);
+                if (elem != null && parent != null)
+                {
+                    lineEntity = CreateEntity("Line", new Vector2(Screen.Width / 2f, Screen.Height / 2f));
+                    // lineEntity.Transform.Parent = _domain.Transform;
+                    lineEntity.LocalPosition = Vector2.Zero;
+                    line = lineEntity.AddComponent<LineRenderer>();
+                    line.LayerDepth = 1;
+
+                    //line.SetUseWorldSpace(false);
+
+                    var from = _treeElements[item.Key].Position;
+                    var to = _treeElements[parent.Value].Position;
+                   
+
+                    line.AddPoint(from, 10);
+                    line.AddPoint(to, 10);
+                    //Console.WriteLine($"{v} {parent.Value}");
+                    _lines.Add(lineEntity);
+                }
+            }
+        }
+        
         private Entity CreateElement(int val)
         {
             var element = CreateEntity("TreeElement"+val).AddComponent(new TreeElement(val));
