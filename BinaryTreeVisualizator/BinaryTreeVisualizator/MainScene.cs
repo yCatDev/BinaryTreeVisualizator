@@ -144,8 +144,8 @@ namespace BinaryTreeVisualizator
                     var to = _treeElements[parent.Value].Position;
                    
 
-                    line.AddPoint(from, 10);
-                    line.AddPoint(to, 10);
+                    line.AddPoint(from, 3);
+                    line.AddPoint(to, 3);
                     //Console.WriteLine($"{v} {parent.Value}");
                     _lines.Add(lineEntity);
                 }

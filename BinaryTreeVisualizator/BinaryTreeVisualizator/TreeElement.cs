@@ -30,19 +30,23 @@ namespace BinaryTreeVisualizator
             _texture = Entity.Scene.Content.Load<Texture2D>(Content.Circle);
             _spriteRenderer = Entity.AddComponent(new SpriteRenderer(_texture));
             _spriteRenderer.RenderLayer = 1;
+            _spriteRenderer.Transform.SetScale(0.75f);
             _textLabel = Entity.Scene.CreateEntity("TextLabel");
             _textLabel.Parent = Entity.Transform;
 
 
             _textComponent = _textLabel.AddComponent<TextComponent>();
             _textComponent.SetFont(Entity.Scene.Content.Load<IFont>(Content.DefaultTitleFont));
+            _textComponent.VerticalOrigin = VerticalAlign.Center;
+            _textComponent.HorizontalOrigin = HorizontalAlign.Center;
             _textComponent.Text = _value;
             _textComponent.Color = Color.Black;
-            _textComponent.Origin = new Vector2(_textComponent.Bounds.Width/2f,_textComponent.Bounds.Height/2f);
-       
-            //_textLabel.Position =  new Vector2(_spriteRenderer.Bounds.Width/2f,_spriteRenderer.Bounds.Height/2f);
-            _textLabel.SetScale(1);
-            
+            _textComponent.Transform.SetScale(0.5f);
+            _textComponent.Transform.Parent = Entity.Transform;
+            _textComponent.Origin = new Vector2(_spriteRenderer.Bounds.Width/3f-_textComponent.Bounds.Width,_spriteRenderer.Bounds.Height/2f);
+            _textComponent.Transform.LocalPosition = Vector2.Zero;
+
+
         }
 
         public void Update()
