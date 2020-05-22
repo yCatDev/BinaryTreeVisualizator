@@ -36,17 +36,20 @@ namespace BinaryTreeVisualizator
             });
 
             var inputCursor = new PrimitiveDrawable(Color.Black);
-            inputCursor.MinHeight = 20;
-            inputCursor.MinWidth = 10;
+            inputCursor.MinHeight = 10;
+            inputCursor.MinWidth = 5;
+            var font = contentManager.LoadBitmapFont(Content.DefaultTitleFont);
+            font.FontSize = 24;
             var style = Skin.Add("inputfield", new TextFieldStyle()
             {
-                Font = contentManager.LoadBitmapFont(Content.DefaultTitleFont),
+                Font = font,
                 FontColor = Color.Black,
                 Cursor = inputCursor,
                 FocusedBackground = new PrimitiveDrawable(Color.Gray),
-                Background = new PrimitiveDrawable(Color.White)
+                Background = new PrimitiveDrawable(Color.White),
+                Selection = new PrimitiveDrawable(Color.Blue)
             });
-
+            
             Skin.Add("regular-button", TextButtonStyle.Create(Color.Black, new Color(61, 9, 85), new Color(61, 9, 107)));
             
             

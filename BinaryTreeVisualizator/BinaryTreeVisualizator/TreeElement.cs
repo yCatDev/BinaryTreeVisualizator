@@ -43,8 +43,9 @@ namespace BinaryTreeVisualizator
             _textComponent.Color = Color.Black;
             _textComponent.Transform.SetScale(0.5f);
             _textComponent.Transform.Parent = Entity.Transform;
-            _textComponent.Origin = new Vector2(_spriteRenderer.Bounds.Width/3f-_textComponent.Bounds.Width,_spriteRenderer.Bounds.Height/2f);
-            _textComponent.Transform.LocalPosition = Vector2.Zero;
+            _textComponent.Transform.LocalPosition  = new Vector2(_spriteRenderer.Bounds.Width/6f-_textComponent.Bounds.Width
+                ,_spriteRenderer.Bounds.Height/2f-_textComponent.Bounds.Height);
+            //_textComponent.Transform.LocalPosition = Vector2.Zero;
 
 
         }

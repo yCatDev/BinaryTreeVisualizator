@@ -32,26 +32,14 @@ namespace BinaryTreeVisualizator
         public override void OnStart()
         {
             base.OnStart();
-           
-            /*var gridEntity  = CreateEntity("grid");
-            gridEntity.AddComponent(new SpringGrid(new Rectangle((int)0, (int)0, (int) (Screen.Width), (int) (Screen.Height)), new Vector2(20))
-            {
-                GridMinorThickness = 0,
-                GridMajorThickness = 4,
-                GridMajorColor = Color.Gray
-            });
-            var grid = gridEntity.GetComponent<SpringGrid>();
-            grid.RenderLayer = 9999;
-            Core.StartCoroutine(Helpers.WaitAndFreeze(gridEntity));*/
-
+            
+            AddRenderer(new ScreenSpaceRenderer(100, 9990));
             _uiHelper = new GameUIHelper(this.Content);
             var ui = CreateEntity("UI").AddComponent<UICanvas>();
-            var mainTable = ui.Stage.AddElement(new Table());
+            ui.RenderLayer = 9990;
+            var input = ui.Stage.AddElement(_uiHelper.CreateInputField("Enter command", OnCommandEnter));
             
-            var input = _uiHelper.CreateInputField(mainTable, "", OnCommandEnter);
-            
-            mainTable.Row();
-            mainTable.Pack();
+            //input.SetPosition(0, Screen.Height / 2f);
 
             _tree = new BinaryTree<int>();
             _treeElements = new Dictionary<int, Entity>(10);
@@ -117,7 +105,8 @@ namespace BinaryTreeVisualizator
             {
                 current = !_treeElements.ContainsKey(v) ? CreateElement(v) : _treeElements[v];
                 //current.LocalPosition = new Vector2(x*50, y*50);
-                current.Transform.TweenLocalPositionTo( new Vector2(x*50, y*50)).Start();
+                current.Transform.TweenLocalPositionTo( new Vector2(x*50, y*50), 0.5f).Start();
+               
             }, _tree.Count);
 
             Core.StartCoroutine(DrawAllLines(afterAdding));
@@ -156,6 +145,11 @@ namespace BinaryTreeVisualizator
         {
             var element = CreateEntity("TreeElement"+val).AddComponent(new TreeElement(val));
             element.Transform.Parent = _domain.Transform;
+            element.Transform.LocalPosition = new Vector2(100, -Screen.Height/2 );
+            var scale_to = new Vector2(0.75f, 0.75f);
+            element.Transform.Scale = Vector2.Zero;
+            element.Transform.TweenScaleTo(scale_to, 0.5f).Start();
+            
             
             _treeElements.Add(val, element.Entity);
             
