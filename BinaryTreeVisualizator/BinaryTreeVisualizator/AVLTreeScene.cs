@@ -71,6 +71,9 @@ namespace BinaryTreeVisualizator
                     if (!IsDigitsOnly(cmd[1])) return;
                     HighlightElement(_tree.FindNext(int.Parse(cmd[1])));
                     break;
+                case "depth":
+                    field.SetTextForced("Depth is "+_tree.GetDepth());
+                    break;
                 case "find-prev":
                     if (!IsDigitsOnly(cmd[1])) return;
                     HighlightElement(_tree.FindPrevious(int.Parse(cmd[1])));

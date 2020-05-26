@@ -76,6 +76,9 @@ namespace BinaryTreeVisualizator
                     if (!IsDigitsOnly(cmd[1])) return;
                     HighlightElement(_tree.FindNext(int.Parse(cmd[1])));
                     break;
+                case "depth":
+                    field.SetTextForced("Depth is "+_tree.GetDepth());
+                    break;
                 case "find-prev":
                     if (!IsDigitsOnly(cmd[1])) return;
                     HighlightElement(_tree.FindPrevious(int.Parse(cmd[1])));
@@ -174,21 +177,27 @@ namespace BinaryTreeVisualizator
         }
         LineRenderer line;
         Entity lineEntity;
+        
         private void RebuildTree(bool afterAdding)
         {
-            Entity current;
-            RemoveAllLines();
-
-
+            /*
+             * Принцип роботи оснований на особливості бінарного дерева пошуку:
+             * воно не може мати одинакових елементів
+             * Отже потрібно створити словник який матиме в ключах значення дерева а в значеннях - об'екти
+             */
+            RemoveAllLines(); //Видаляємо всі лінії
+            
             _tree.Draw((x, y, v) =>
             {
-                current = !_treeElements.ContainsKey(v) ? CreateElement(v) : _treeElements[v];
-                //current.LocalPosition = new Vector2(x*50, y*50);
+                //Якщо в словнику є елемент з таким значенням то використовуємо його якщо ж ні створюємо новий 
+                var current = !_treeElements.ContainsKey(v) ? CreateElement(v) : _treeElements[v];
+                //Запускаємо переміщення ноди в нову позицію
                 current.Transform.TweenLocalPositionTo( new Vector2(x*50, y*50), 0.5f).Start();
-               
-            }, _tree.Count);
-
+            }, _tree.Count); //Викликаємо відрисовку
+            
+            //Малюємо звязуючи лінії
             Core.StartCoroutine(DrawAllLines(afterAdding));
+            //Центруємо дерево на єкрані
             _domain.Position = new Vector2(Screen.Width/2f-(_tree.Count*50), Screen.Height/2f);
         }
 

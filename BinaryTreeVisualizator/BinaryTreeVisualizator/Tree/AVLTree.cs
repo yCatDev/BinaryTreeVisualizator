@@ -576,6 +576,24 @@ namespace BinaryTreeVisualizator.Tree
              return current;
          }
          
+         public int GetDepth() => GetDepth(Head);
+        
+         private int GetDepth(AVLTreeNode<T> node)
+         {
+             if (node == null) 
+                 return 0;
+            
+             /* Рахуємо максимальну глубину по сторонам */
+             var lDepth = GetDepth(node.Left); 
+             var rDepth = GetDepth(node.Right); 
+  
+             /* повертаємо набільшу із них */
+             if (lDepth > rDepth) 
+                 return (lDepth + 1); 
+             else
+                 return (rDepth + 1);
+         } 
+         
          /// <summary>
          /// Реализация префиксного обхода для отрисовки
          /// </summary>

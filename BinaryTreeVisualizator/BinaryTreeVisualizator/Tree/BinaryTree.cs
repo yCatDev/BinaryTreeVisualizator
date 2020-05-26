@@ -73,30 +73,30 @@ namespace BinaryTreeVisualizator.Tree
         /// 
         public BinaryTreeNode<T> FindWithParent(T value, out BinaryTreeNode<T> parent)
         {
-            // Попробуем найти значение в дереве.
+            
             BinaryTreeNode<T> current = _head;
             parent = null;
 
-            // До тех пор, пока не нашли...
+            // Поки елемент не знайдений
             while (current != null)
             {
                 int result = current.CompareTo(value);
 
                 if (result > 0)
                 {
-                    // Если искомое значение меньше, идем налево.
+                    // Якщо шукане значення менше йдемо наліво
                     parent = current;
                     current = current.Left;
                 }
                 else if (result < 0)
                 {
-                    // Если искомое значение больше, идем направо.
+                    // Якщо шукане значення більше йдемо направо
                     parent = current;
                     current = current.Right;
                 }
                 else
                 {
-                    // Если равны, то останавливаемся
+                    // Якщо співпадають то значення найдене
                     break;
                 }
             }
@@ -104,6 +104,24 @@ namespace BinaryTreeVisualizator.Tree
             return current;
         }
 
+        public int GetDepth() => GetDepth(_head);
+        
+        private int GetDepth(BinaryTreeNode<T> node)
+        {
+            if (node == null) 
+                return 0;
+            
+            /* Рахуємо максимальну глубину по сторонам */
+            var lDepth = GetDepth(node.Left); 
+            var rDepth = GetDepth(node.Right); 
+  
+            /* повертаємо набільшу із них */
+            if (lDepth > rDepth) 
+                return (lDepth + 1); 
+            else
+                return (rDepth + 1);
+        } 
+        
         public bool Remove(T value)
         {
             BinaryTreeNode<T> current, parent;
@@ -340,13 +358,13 @@ namespace BinaryTreeVisualizator.Tree
 
         private void DrawElement(Action<int, int, T> onDraw, int x, int y, BinaryTreeNode<T> node, int delta = 0)
         {
-            if (node != null)
-            {
-                if (delta == 0) delta = x / 2;
-                onDraw(x, y, node.Value); //Идем в корень
-                DrawElement(onDraw, x - delta, y + 3, node.Left, delta / 2); //Влево
-                DrawElement(onDraw, x + delta, y + 3, node.Right, delta / 2); //Вправо
-            }
+            //Прямий обхід
+            if (node == null) return;
+            
+            if (delta == 0) delta = x / 2;
+            onDraw(x, y, node.Value); 
+            DrawElement(onDraw, x - delta, y + 3, node.Left, delta / 2); 
+            DrawElement(onDraw, x + delta, y + 3, node.Right, delta / 2);
         }
         
         //В двоичном дереве поиска найти элемент, следующий за данным.
