@@ -213,12 +213,11 @@ namespace BinaryTreeVisualizator.Tree
 
         private void PreOrderTraversal(Action<T> action, BinaryTreeNode<T> node)
         {
-            if (node != null)
-            {
-                action(node.Value);
-                PreOrderTraversal(action, node.Left);
-                PreOrderTraversal(action, node.Right);
-            }
+            if (node == null) return; //Вихід із рекурсії
+            
+            action(node.Value); //Пошук в центрі
+            PreOrderTraversal(action, node.Left); //Пошук зліва 
+            PreOrderTraversal(action, node.Right); //Пошук справа
         }
 
         public void PostOrderTraversal(Action<T> action)

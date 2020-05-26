@@ -59,16 +59,16 @@ namespace BinaryTreeVisualizator
 
 
         }
-        public void Highlight()
+        public void Highlight(int seconds)
         {
-            Core.StartCoroutine(HighlightIt());
+            Core.StartCoroutine(HighlightIt(seconds));
         }
 
-        private IEnumerator HighlightIt()
+        private IEnumerator HighlightIt(int seconds)
         {
             var col = _outlineRenderer.OutlineColor;
             _outlineRenderer.OutlineColor = Color.Red;
-            yield return Coroutine.WaitForSeconds(3);
+            yield return Coroutine.WaitForSeconds(seconds);
             _outlineRenderer.OutlineColor = col;
         }
         

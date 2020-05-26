@@ -436,6 +436,52 @@ namespace BinaryTreeVisualizator.Tree
             Head = null; // удаление дерева
             Count = 0;
         }
+        public void PreOrderTraversal(Action<T> action)
+        {
+            PreOrderTraversal(action, Head);
+        }
+
+        private void PreOrderTraversal(Action<T> action, AVLTreeNode<T> node)
+        {
+            if (node == null) return; //Вихід із рекурсії
+            
+            action(node.Value); //Пошук в центрі
+            PreOrderTraversal(action, node.Left); //Пошук зліва 
+            PreOrderTraversal(action, node.Right); //Пошук справа
+        }
+
+        public void PostOrderTraversal(Action<T> action)
+        {
+            PostOrderTraversal(action, Head);
+        }
+
+        private void PostOrderTraversal(Action<T> action, AVLTreeNode<T> node)
+        {
+            if (node != null)
+            {
+                PostOrderTraversal(action, node.Left);
+                PostOrderTraversal(action, node.Right);
+                action(node.Value);
+            }
+        }
+
+
+        public void InOrderTraversal(Action<T> action)
+        {
+            InOrderTraversal(action, Head);
+        }
+
+        private void InOrderTraversal(Action<T> action, AVLTreeNode<T> node)
+        {
+            if (node != null)
+            {
+                InOrderTraversal(action, node.Left);
+
+                action(node.Value);
+
+                InOrderTraversal(action, node.Right);
+            }
+        }
 
          public IEnumerator<T> InOrderTraversal()
         {

@@ -87,7 +87,9 @@ namespace BinaryTreeVisualizator
                     else
                         field.SetTextForced("Not found");
                     break;
-                
+                case "preorder":
+                    HighlightPreoder(field);
+                    break;
                 case "menu":
                     Core.StartSceneTransition(new FadeTransition(() => new Menu()));
                     _prevent = true;
@@ -95,10 +97,32 @@ namespace BinaryTreeVisualizator
             }
         }
 
-        public void HighlightElement(int value)
+
+        public void HighlightPreoder(TextField field)
+        {
+            Core.StartCoroutine(HighlightPreoderBehaviour(field, 1));
+        }
+
+        private IEnumerator HighlightPreoderBehaviour(TextField field, int seconds)
+        {
+            field.SetTextForced("");
+            field.SetDisabled(true);
+            var tmp = new List<int>();
+            _tree.PreOrderTraversal((x)=>tmp.Add(x));
+            foreach (var i in tmp)
+            {
+                HighlightElement(i, seconds);
+                field.SetTextForced(field.GetText() + " " + i);
+                yield return Coroutine.WaitForSeconds(seconds);
+            }
+
+            field.SetDisabled(false);
+        }
+        
+        public void HighlightElement(int value, int seconds = 3)
         {
             if (_treeElements.ContainsKey(value))
-                _treeElements[value].GetComponent<TreeElement>().Highlight();
+                _treeElements[value].GetComponent<TreeElement>().Highlight(seconds);
         }
         
         private void ClearTree()
