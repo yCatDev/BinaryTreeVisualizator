@@ -38,8 +38,11 @@ namespace TinyAlgorithmVisualizer.Scenes
 
             return true;
         }
-      
-        
+
+        protected virtual void AfterStartup()
+        {
+            
+        }
         protected abstract void OnCommandEnter(TextField field);
     }
 }

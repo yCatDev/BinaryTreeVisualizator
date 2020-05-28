@@ -26,6 +26,12 @@ namespace TinyAlgorithmVisualizer.Scenes
             _lines = new List<Entity>();
         }
 
+        protected override void AfterStartup()
+        {
+            base.AfterStartup();
+            //Domain.Position = new Vector2(Screen.Width, Screen.Height);
+        }
+
         protected override void OnCommandEnter(TextField field)
         {
             if (_prevent) return;
@@ -37,13 +43,18 @@ namespace TinyAlgorithmVisualizer.Scenes
                     CreateQueue(int.Parse(cmd[1]));
                     break;
                 case "push":
+                    if (_queue.IsFull)
+                    {
+                        field.SetTextForced("Queue is full!");
+                        break;
+                    }
                     if (!IsDigitsOnly(cmd[1])) return;
                     AddElement(int.Parse(cmd[1]));
                     break;
                 case "pop":
                     if (_queue.IsEmpty)
                     {
-                        field.SetTextForced("Stack is empty!");
+                        field.SetTextForced("Queue is empty!");
                         break;
                     }
 
@@ -72,16 +83,29 @@ namespace TinyAlgorithmVisualizer.Scenes
 
         private void RemoveElement()
         {
-            _queue.Dequeue();
-            var el = _drawElements[_queue.Head-1].Value;
+            var el = _drawElements[_queue.Head].Value;
             el.GetComponent<DrawElement>().SetText("");
-            _drawElements[_queue.Head-1] = new KeyValuePair<bool, Entity>(false,el);
+            _drawElements[_queue.Head] = new KeyValuePair<bool, Entity>(false,el);
+            _queue.Dequeue();
+            
            
             RebuildStructure();
         }
 
+        private void Clear()
+        {
+            foreach (var (key, value) in _drawElements)
+            {
+                value.Transform.TweenScaleTo(Vector2.Zero, 0.5f).Start();
+                value.Destroy(1);
+            }
+            _drawElements.Clear();
+        }
+        
         private void CreateQueue(int size)
         {
+            RemoveAllLines();
+            Clear();
             _queue = new LoopedQueue<int>(size);
             var step = 360 / size;
             var angle = 0f;
@@ -98,9 +122,9 @@ namespace TinyAlgorithmVisualizer.Scenes
         {
             angle = (float) ((angle ) * (Math.PI/180)); // Convert to radians
 
-            var rotatedX =(float)( Math.Cos(angle) * (0 - 400) - Math.Sin(angle) * (dist-300) + 0);
+            var rotatedX =(float)( Math.Cos(angle) * (dist - Domain.Position.X) - Math.Sin(angle) * (dist-Domain.Position.Y) + Domain.Position.X);
 
-            var rotatedY = (float)( Math.Sin(angle) * (0 - 400) + Math.Cos(angle) * (dist - 300) + 0);
+            var rotatedY = (float)( Math.Sin(angle) * (dist - Domain.Position.X) + Math.Cos(angle) * (dist - Domain.Position.Y) + Domain.Position.Y);
             
             return new Vector2(rotatedX,rotatedY);
         }
@@ -161,11 +185,12 @@ namespace TinyAlgorithmVisualizer.Scenes
         private void RebuildStructure()
         {
             var tmp = _queue.GetAllElements();
+            
             for (int i = 0; i < tmp.Length; i++)
             {
                 var el = _drawElements[i].Value.GetComponent<DrawElement>();
                 el.SetText(_drawElements[i].Key ? tmp[i].ToString() : "");
-                el.Highlight(Color.Purple);
+                el.Highlight(_drawElements[i].Key ? Color.Blue : new Color(61, 9, 107));
             }
 
             try
