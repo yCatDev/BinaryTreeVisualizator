@@ -5,158 +5,197 @@ using System.Linq;
 
 namespace TinyAlgorithmVisualizer.Algorithms.DataStructures
 {
-    
-    
-    
-    public class MyList<T>: IEnumerable<T>
+    internal class MyListNode<T>
     {
-        public T Value;
-        private bool _fresh = false; 
-        private MyList<T> _previous;
-        private MyList<T> _next;
-        
-        public MyList()
-        {
-            Value = default;
-            _previous = _next = null;
-            _fresh = true;
-        }
-     
-        private MyList(T item, MyList<T> prev, MyList<T> next)
+        internal T Value;
+        internal MyListNode<T> Previous;
+        internal MyListNode<T> Next;
+        internal bool Empty = true;
+
+        public MyListNode<T> First() => Previous == null ? this : Previous.First();
+
+        internal MyListNode<T> Last() => Next == null ? this : Next.Last();
+
+        internal MyListNode(T item, MyListNode<T> prev, MyListNode<T> next)
         {
             Value = item;
-            _previous = prev;
-            _next = next;
+            Previous = prev;
+            Next = next;
+            Empty = false;
+        }
+
+        public void SelfRemove()
+        {
+            var prev = Previous;
+            if (Previous != null)
+                Previous.Next = Next;
+            if (Next != null)
+                Next.Previous = prev;
+        }
+    }
+
+    public class MyList<T> : IEnumerable<T>
+    {
+        private MyListNode<T> _data;
+        public T Value => _data.Value;
+
+        public MyList()
+        {
         }
 
         public void AddToFront(T item)
         {
-            if (_fresh)
-            {
-                Value = item;
-                _fresh = false;
-                return;
-            }
+            if (CheckSelf(item)) return;
 
-            if (_previous == null)
+            if (_data.Previous == null)
             {
-                _previous = new MyList<T>(item, null, this);
-                Console.WriteLine($"{item} {_fresh}");
+                _data.Previous = new MyListNode<T>(item, null, _data);
             }
-            else _previous.AddToFront(item);
+            else AddToFront(item, _data.Previous);
         }
+
+        private void AddToFront(T item, MyListNode<T> node)
+        {
+            if (node.Previous == null)
+            {
+                node.Previous = new MyListNode<T>(item, null, node);
+            }
+            else AddToFront(item, node.Previous);
+        }
+
+
         public void AddToEnd(T item)
         {
-            if (_fresh)
-            {
-                Value = item;
-                _fresh = false;
-                return;
-            }
+            if (CheckSelf(item)) return;
 
-            if (_next == null)
+            if (_data.Next == null)
             {
-                _next = new MyList<T>(item, this, null);
-                Console.WriteLine($"{item} {_fresh}");
+                _data.Next = new MyListNode<T>(item, _data, null);
             }
-            else _next.AddToEnd(item);
+            else AddToEnd(item, _data.Next);
         }
 
-        
-        
+        private void AddToEnd(T item, MyListNode<T> node)
+        {
+            if (node.Next == null)
+            {
+                node.Next = new MyListNode<T>(item, node, null);
+            }
+            else AddToEnd(item, node.Next);
+        }
+
+        private bool CheckSelf(T val)
+        {
+            if (_data != null) return false;
+
+            _data = new MyListNode<T>(val, null, null);
+            return true;
+        }
+
+
         public int? IndexOf(T item)
         {
-            var current = First();
+            var current = _data.First();
             var ind = 0;
-            
+
             while (current != null)
             {
                 if (!Equals(current.Value, item))
                 {
                     ind++;
-                    current = current._next;
+                    current = current.Next;
                 }
                 else return ind;
             }
+
             return null;
         }
 
-        public MyList<T> First() => _previous == null ? this : _previous.First();
-
-        public MyList<T> Last() => _next == null ? this : _next.Last();
 
         public void SwapCorners()
         {
-            var t = First().Value;
-            First().Value = Last().Value;
-            Last().Value = t;
+            var t = _data.First().Value;
+            _data.First().Value = _data.Last().Value;
+            _data.Last().Value = t;
         }
 
         public void Remove(T item)
         {
             var side = 2;
-            var current = this;
-            
-            if (Equals(current.Value, item))
-            {
-                current.SelfRemove();   
-                return;
-            }
-            
+            var current = _data;
+
             while (side > 0)
             {
                 if (side == 2)
                 {
-                    if (current._previous == null)
+                    if (current.Previous == null)
                     {
                         side--;
                         continue;
                     }
 
-                    current = current._previous;
+                    current = current.Previous;
                 }
 
                 if (side == 1)
                 {
-                    if (current._next == null)
+                    if (current.Next == null)
                     {
                         side--;
                         continue;
                     }
 
-                    current = current._next;
+                    current = current.Next;
                 }
 
                 if (!Equals(current.Value, item)) continue;
-                
-                current.SelfRemove();   
+
+                current.SelfRemove();
                 return;
             }
         }
 
-        public bool IsEmpty => (_previous==null && _next==null);
+        public bool RemoveAt(int index)
+        {
+            var current = _data.First();
+            var c = 0;
+            while (current != null)
+            {
+                if (c == index)
+                {
+                    current.SelfRemove();
+                    return true;
+                }
+
+                current = current.Next;
+                c++;
+            }
+
+            return false;
+        }
+
+        public bool IsEmpty => Count==0;
 
         public int Count => this.Count();
 
         private void SelfRemove()
         {
-            var prev = _previous;
-            if (_previous != null)
-                _previous._next = _next;
-            if (_next!=null)
-                _next._previous = prev;
-            _fresh = true;
+            var prev = _data.Previous;
+            if (_data.Previous != null)
+                _data.Previous.Next = _data.Next;
+            if (_data.Next != null)
+                _data.Next.Previous = prev;
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            var current = First();
+            if (_data == null) yield break;
+            var current = _data.First();
             while (current != null)
             {
-                //if (current.Value!=null)
-                    yield return current.Value;
-                //Console.WriteLine($"{current.Value} {_fresh}");
-                current = current._next;
+                Console.WriteLine(current.Value);
+                yield return current.Value;
+                current = current.Next;
             }
 
             Console.WriteLine();
@@ -167,5 +206,4 @@ namespace TinyAlgorithmVisualizer.Algorithms.DataStructures
             return GetEnumerator();
         }
     }
-
 }

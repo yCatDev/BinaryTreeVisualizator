@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Nez;
 using Nez.UI;
+using TinyAlgorithmVisualizer.Algorithms.DataStructures;
 
 namespace TinyAlgorithmVisualizer.Scenes
 {
@@ -53,8 +54,21 @@ namespace TinyAlgorithmVisualizer.Scenes
                     
                     RemoveElement(int.Parse(cmd[1]));
                     break;
+                case "removeat":
+                    if (_list.IsEmpty)
+                    {
+                        field.SetTextForced("List is empty!");
+                        break;
+                    }
+                    if (!IsDigitsOnly(cmd[1])) return;
+                    var ind = int.Parse(cmd[1]);
+                    RemoveElementByInd(ind);
+                    break;
                 case "count":
                     field.SetTextForced($"In stack {_list.Count} elements");
+                    break;
+                case "clear":
+                    Clear();
                     break;
                 case "menu":
                     Core.StartSceneTransition(new FadeTransition(() => new Menu()));
@@ -63,6 +77,20 @@ namespace TinyAlgorithmVisualizer.Scenes
             }
         }
 
+        private void Clear()
+        {
+            var tmp = _list.ToArray();
+            foreach (var item in tmp)
+            {
+                _list.RemoveAt(0);
+                _drawElements[0].Value.Transform.TweenScaleTo(Vector2.Zero, 0.5f).Start();
+                _drawElements[0].Value.Destroy(1);
+                _drawElements.RemoveAt(0);
+            }
+            _list = new MyList<int>();
+            RemoveAllLines();
+        }
+        
         private void AddElement(bool front, int val)
         {
             if (front)
@@ -75,12 +103,13 @@ namespace TinyAlgorithmVisualizer.Scenes
 
         private void RemoveElement(int val)
         {
-            _list.Remove(val);
             var ind = _list.IndexOf(val);
+           
             if (ind == null)
                 return;
-            //if (!_tree.Contains(value)) return;
-           
+            _list.RemoveAt(ind.Value);
+            if (_list.IsEmpty)
+                _list = new MyList<int>();
             _drawElements[ind.Value].Value.Transform.TweenScaleTo(Vector2.Zero, 0.5f).Start();
             _drawElements[ind.Value].Value.Destroy(1);
             _drawElements.RemoveAt(ind.Value);
@@ -88,6 +117,18 @@ namespace TinyAlgorithmVisualizer.Scenes
             RebuildStructure();
         }
 
+        private void RemoveElementByInd(int ind)
+        {
+            if (!_list.RemoveAt(ind)) return;
+            if (_list.IsEmpty)
+                _list = new MyList<int>();
+            _drawElements[ind].Value.Transform.TweenScaleTo(Vector2.Zero, 0.5f).Start();
+            _drawElements[ind].Value.Destroy(1);
+            _drawElements.RemoveAt(ind);
+
+            RebuildStructure();
+        }
+        
         private int GetMissingIndex()
         {
             var tmp = _list.ToArray();
@@ -165,11 +206,12 @@ namespace TinyAlgorithmVisualizer.Scenes
 
             RemoveAllLines();
             var tmp = _list.ToArray();
+            if (tmp.Length == 0)
+                return;
             for (int i = 0; i < tmp.Length; i++)
             {
                 //Console.WriteLine(tmp[i]);
-
-                var current = _drawElements[i].Value;
+                var current = i>=_drawElements.Count ? CreateElement(tmp[i], i):_drawElements[i].Value;
                 //current = !_drawElements.ContainsKey(v) ?  : _drawElements[v];
                 current.Transform.TweenLocalPositionTo(new Vector2(0, i * 100), 0.5f).Start();
             }
