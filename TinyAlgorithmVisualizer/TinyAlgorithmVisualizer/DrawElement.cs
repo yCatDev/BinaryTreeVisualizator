@@ -19,17 +19,19 @@ namespace TinyAlgorithmVisualizer
         private Entity _textLabel;
         private TextComponent _textComponent;
         private SpriteOutlineRenderer _outlineRenderer;
+        private bool _isCircle;
 
-        public DrawElement(int value)
+        public DrawElement(int value, bool isCircle = true)
         {
             _value = value.ToString();
+            _isCircle = isCircle;
         }
 
         public override void OnEnabled()
         {
             base.OnEnabled();
-            
-            _texture = Entity.Scene.Content.Load<Texture2D>(Content.Circle);
+            _texture = Entity.Scene.Content.Load<Texture2D>(_isCircle ? Content.Circle : Content.Square);
+
             _spriteRenderer = Entity.AddComponent(new SpriteRenderer(_texture));
             _spriteRenderer.LayerDepth = 0;
             _spriteRenderer.RenderLayer = 1;

@@ -40,12 +40,6 @@ namespace TinyAlgorithmVisualizer.Algorithms.DataStructures
             _count--;
             return temp.Data;
         }
-        public T Peek()
-        {
-            if (IsEmpty) throw new InvalidOperationException("Stack is empty!");
-            
-            return _head.Data;
-        }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
@@ -61,6 +55,8 @@ namespace TinyAlgorithmVisualizer.Algorithms.DataStructures
                 current = current.Next;
             }
         }
+        
+        
     }
 
 

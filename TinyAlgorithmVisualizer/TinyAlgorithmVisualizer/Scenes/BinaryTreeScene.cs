@@ -113,16 +113,7 @@ namespace TinyAlgorithmVisualizer.Scenes
             RebuildTree(false);
         }
         
-        bool IsDigitsOnly(string str)
-        {
-            foreach (char c in str)
-            {
-                if (c < '0' || c > '9')
-                    return false;
-            }
-
-            return true;
-        }
+       
         private void RemoveElement(int value)
         {
             if (!_tree.Contains(value)) return;
@@ -143,8 +134,7 @@ namespace TinyAlgorithmVisualizer.Scenes
             RebuildTree(true);
         }
 
-        private LineRenderer line;
-        private Entity lineEntity;
+      
         
         private void RebuildTree(bool afterAdding)
         {
@@ -171,16 +161,17 @@ namespace TinyAlgorithmVisualizer.Scenes
 
         private IEnumerator DrawAllLines(bool afterAdding)
         {
+            
             yield return Coroutine.WaitForSeconds(0.5f);
             foreach (var item in _treeElements)
             {
                 var elem = _tree.FindWithParent(item.Key, out var parent);
                 if (elem != null && parent != null)
                 {
-                    lineEntity = CreateEntity("Line", new Vector2(Screen.Width / 2f, Screen.Height / 2f));
+                    var lineEntity = CreateEntity("Line", new Vector2(Screen.Width / 2f, Screen.Height / 2f));
                     // lineEntity.Transform.Parent = _domain.Transform;
                     lineEntity.LocalPosition = Vector2.Zero;
-                    line = lineEntity.AddComponent<LineRenderer>();
+                    var line = lineEntity.AddComponent<LineRenderer>();
                     line.LayerDepth = 1;
                     line.RenderLayer = 999;
 
@@ -206,9 +197,9 @@ namespace TinyAlgorithmVisualizer.Scenes
             var element = CreateEntity("TreeElement"+val).AddComponent(new DrawElement(val));
             element.Transform.Parent = Domain.Transform;
             element.Transform.LocalPosition = new Vector2(100, -Screen.Height/2 );
-            var scale_to = new Vector2(0.75f, 0.75f);
+            var scaleTo = new Vector2(0.75f, 0.75f);
             element.Transform.Scale = Vector2.Zero;
-            element.Transform.TweenScaleTo(scale_to, 0.5f).Start();
+            element.Transform.TweenScaleTo(scaleTo, 0.5f).Start();
             
             
             _treeElements.Add(val, element.Entity);

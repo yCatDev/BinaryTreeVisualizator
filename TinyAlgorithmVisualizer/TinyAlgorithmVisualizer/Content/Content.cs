@@ -12,7 +12,7 @@ namespace TinyAlgorithmVisualizer
         public const string Save = @"Content/save.file";
         
         public const string Blank = @"Sprites/blank";
-        public const string White = @"Sprites/white";
+        public const string Square = @"Sprites/square";
         public const string Circle = @"Sprites/circle";
         
 

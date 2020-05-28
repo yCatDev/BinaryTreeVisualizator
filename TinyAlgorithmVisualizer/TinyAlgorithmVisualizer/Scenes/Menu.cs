@@ -51,7 +51,7 @@ namespace TinyAlgorithmVisualizer
 
            
             _uiHelper.CreateBtn(_table, "Stack", (btn) =>
-                Core.StartSceneTransition(new FadeTransition(() => new BinaryTreeScene())));
+                Core.StartSceneTransition(new FadeTransition(() => new StackScene())));
             _table.Row();
             
             _uiHelper.CreateBtn(_table, "Looped queue", (btn) =>
