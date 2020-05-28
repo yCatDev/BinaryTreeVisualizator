@@ -67,6 +67,14 @@ namespace TinyAlgorithmVisualizer.Scenes
                 case "count":
                     field.SetTextForced($"In stack {_list.Count} elements");
                     break;
+                case "search":
+                    var i = _list.IndexOf(int.Parse(cmd[1]));
+                    if (i.HasValue)
+                    {
+                        _drawElements[i.Value].Value.GetComponent<DrawElement>().Highlight(3);
+                    }else  field.SetTextForced($"Item not found");
+
+                    break;
                 case "clear":
                     Clear();
                     break;
