@@ -70,6 +70,11 @@ namespace TinyAlgorithmVisualizer.Scenes
                 case "clear":
                     Clear();
                     break;
+                case "swap":
+                    _list.SwapCorners();
+                    RebuildStructure();
+                    break;
+                
                 case "menu":
                     Core.StartSceneTransition(new FadeTransition(() => new Menu()));
                     _prevent = true;
@@ -138,7 +143,7 @@ namespace TinyAlgorithmVisualizer.Scenes
                     return i;
             }
 
-            return tmp.Length - 1;
+            return tmp.Length;
         }
 
         private void RemoveAllLines()
@@ -212,8 +217,10 @@ namespace TinyAlgorithmVisualizer.Scenes
             {
                 //Console.WriteLine(tmp[i]);
                 var current = i>=_drawElements.Count ? CreateElement(tmp[i], i):_drawElements[i].Value;
-                //current = !_drawElements.ContainsKey(v) ?  : _drawElements[v];
-                current.Transform.TweenLocalPositionTo(new Vector2(0, i * 100), 0.5f).Start();
+                
+                if (i < _drawElements.Count)
+                    current.GetComponent<DrawElement>().SetText(tmp[i].ToString());
+                current.Transform.TweenLocalPositionTo(new Vector2(i*100, 0), 0.5f).Start();
             }
 
             //Малюємо звязуючи лінії

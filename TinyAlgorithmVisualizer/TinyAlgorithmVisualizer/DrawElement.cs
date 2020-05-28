@@ -27,9 +27,9 @@ namespace TinyAlgorithmVisualizer
             _isCircle = isCircle;
         }
 
-        public override void OnEnabled()
+        public override void Initialize()
         {
-            base.OnEnabled();
+            base.Initialize();
             _texture = Entity.Scene.Content.Load<Texture2D>(_isCircle ? Content.Circle : Content.Square);
 
             _spriteRenderer = Entity.AddComponent(new SpriteRenderer(_texture));
@@ -60,6 +60,12 @@ namespace TinyAlgorithmVisualizer
             //_textComponent.Transform.LocalPosition = Vector2.Zero;
 
 
+        }
+
+        public override void OnEnabled()
+        {
+            base.OnEnabled();
+           
         }
         public void Highlight(int seconds)
         {
