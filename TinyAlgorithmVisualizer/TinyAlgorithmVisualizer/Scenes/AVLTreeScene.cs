@@ -9,41 +9,21 @@ namespace TinyAlgorithmVisualizer.Scenes
 {
     
 
-    public class AvlTreeScene : Scene
+    public class AvlTreeScene : BasicDemoScene
     {
-        private GameUIHelper _uiHelper;
-        private Entity _domain;
         private AVLTree<int> _tree;
         private Dictionary<int, Entity> _treeElements;
         private List<Entity> _lines;
         
-        public override void OnStart()
+        public override void Initialize()
         {
-            base.OnStart();
-            
-            AddRenderer(new ScreenSpaceRenderer(100, 9990));
-            _uiHelper = new GameUIHelper(this.Content);
-            var ui = CreateEntity("UI").AddComponent<UICanvas>();
-            ui.RenderLayer = 9990;
-            var input = ui.Stage.AddElement(_uiHelper.CreateInputField("Enter command", OnCommandEnter));
-            
-            //input.SetPosition(0, Screen.Height / 2f);
-
+            base.Initialize();
             _tree = new AVLTree<int>();
-            _treeElements = new Dictionary<int, Entity>(10);
+            _treeElements = new Dictionary<int, Entity>();
             _lines = new List<Entity>();
-            
-            _domain = CreateEntity("Domain");
-            //_domain.AddComponent<ViewController>();
-            _domain.Position = new Vector2(Screen.Width/2f, Screen.Height/2f);
-            Camera.Entity.AddComponent<ViewController>();
-            
-            
-
-
         }
-
-        private void OnCommandEnter(TextField field)
+        
+        protected override void OnCommandEnter(TextField field)
         {
             if (_prevent) return;
             var cmd = field.GetText().Split(' ');
@@ -152,12 +132,7 @@ namespace TinyAlgorithmVisualizer.Scenes
             _treeElements.Remove(value);
             RebuildTree(false);
         }
-
-        public override void Initialize()
-        {
-            base.Initialize();
-            ClearColor = Color.Black;
-        }
+        
 
         private void AddElement(int value)
         {
@@ -185,7 +160,7 @@ namespace TinyAlgorithmVisualizer.Scenes
             }, _tree.Count);
 
             Core.StartCoroutine(DrawAllLines(afterAdding));
-            _domain.Position = new Vector2(Screen.Width/2f-(_tree.Count*50), Screen.Height/2f);
+            Domain.Position = new Vector2(Screen.Width/2f-(_tree.Count*50), Screen.Height/2f);
         }
 
         private IEnumerator DrawAllLines(bool afterAdding)
@@ -223,11 +198,11 @@ namespace TinyAlgorithmVisualizer.Scenes
         private Entity CreateElement(int val)
         {
             var element = CreateEntity("TreeElement"+val).AddComponent(new TreeElement(val));
-            element.Transform.Parent = _domain.Transform;
+            element.Transform.Parent = Domain.Transform;
             element.Transform.LocalPosition = new Vector2(100, -Screen.Height/2 );
-            var scale_to = new Vector2(0.75f, 0.75f);
+            var scaleTo = new Vector2(0.75f, 0.75f);
             element.Transform.Scale = Vector2.Zero;
-            element.Transform.TweenScaleTo(scale_to, 0.5f).Start();
+            element.Transform.TweenScaleTo(scaleTo, 0.5f).Start();
             
             
             _treeElements.Add(val, element.Entity);
@@ -244,11 +219,6 @@ namespace TinyAlgorithmVisualizer.Scenes
                 element.Destroy();
             }
         }
-
-        public override void Update()
-        {
-           
-            base.Update();
-        }
+        
     }
 }

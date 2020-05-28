@@ -9,48 +9,22 @@ using TinyAlgorithmVisualizer.Algorithms.Tree;
 namespace TinyAlgorithmVisualizer.Scenes
 {
 
-    public class Helpers
+    public class BinaryTreeScene : BasicDemoScene
     {
-        public static IEnumerator WaitAndFreeze(Entity target)
-        {
-            yield return Coroutine.WaitForSeconds(0.1f);
-            target.UpdateInterval = UInt32.MaxValue;
-        }
-    }
-
-    public class BinaryTreeScene : Scene
-    {
-        private GameUIHelper _uiHelper;
-        private Entity _domain;
         private BinaryTree<int> _tree;
         private Dictionary<int, Entity> _treeElements;
         private List<Entity> _lines;
-        
-        public override void OnStart()
-        {
-            base.OnStart();
-            
-            AddRenderer(new ScreenSpaceRenderer(100, 9990));
-            _uiHelper = new GameUIHelper(this.Content);
-            var ui = CreateEntity("UI").AddComponent<UICanvas>();
-            ui.RenderLayer = 9990;
-            var input = ui.Stage.AddElement(_uiHelper.CreateInputField("Enter command", OnCommandEnter));
-            
-            //input.SetPosition(0, Screen.Height / 2f);
 
+        public override void Initialize()
+        {
+            base.Initialize();
             _tree = new BinaryTree<int>();
-            _treeElements = new Dictionary<int, Entity>(10);
+            _treeElements = new Dictionary<int, Entity>();
             _lines = new List<Entity>();
-            Vector2 a;
-            
-            _domain = CreateEntity("Domain");
-            //_domain.AddComponent<ViewController>();
-            _domain.Position = new Vector2(Screen.Width/2f, Screen.Height/2f);
-            Camera.Entity.AddComponent<ViewController>();
         }
 
         private bool _prevent = false;
-        private void OnCommandEnter(TextField field)
+        protected override void OnCommandEnter(TextField field)
         {
             if (_prevent) return;
             var cmd = field.GetText().Split(' ');
@@ -159,12 +133,7 @@ namespace TinyAlgorithmVisualizer.Scenes
             _treeElements.Remove(value);
             RebuildTree(false);
         }
-
-        public override void Initialize()
-        {
-            base.Initialize();
-            ClearColor = Color.Black;
-        }
+        
 
         private void AddElement(int value)
         {
@@ -173,8 +142,9 @@ namespace TinyAlgorithmVisualizer.Scenes
             _tree.Add(value);
             RebuildTree(true);
         }
-        LineRenderer line;
-        Entity lineEntity;
+
+        private LineRenderer line;
+        private Entity lineEntity;
         
         private void RebuildTree(bool afterAdding)
         {
@@ -196,7 +166,7 @@ namespace TinyAlgorithmVisualizer.Scenes
             //Малюємо звязуючи лінії
             Core.StartCoroutine(DrawAllLines(afterAdding));
             //Центруємо дерево на єкрані
-            _domain.Position = new Vector2(Screen.Width/2f-(_tree.Count*50), Screen.Height/2f);
+            Domain.Position = new Vector2(Screen.Width/2f-(_tree.Count*50), Screen.Height/2f);
         }
 
         private IEnumerator DrawAllLines(bool afterAdding)
@@ -234,7 +204,7 @@ namespace TinyAlgorithmVisualizer.Scenes
         private Entity CreateElement(int val)
         {
             var element = CreateEntity("TreeElement"+val).AddComponent(new TreeElement(val));
-            element.Transform.Parent = _domain.Transform;
+            element.Transform.Parent = Domain.Transform;
             element.Transform.LocalPosition = new Vector2(100, -Screen.Height/2 );
             var scale_to = new Vector2(0.75f, 0.75f);
             element.Transform.Scale = Vector2.Zero;
