@@ -14,6 +14,8 @@ namespace TinyAlgorithmVisualizer.Algorithms.DataStructures
         private int _length;
         
         public int Count => _length;
+        public int Head => _headIndex;
+        public int Tail => _tailIndex;
 
         public LoopedQueue(int size)
         {
@@ -64,6 +66,11 @@ namespace TinyAlgorithmVisualizer.Algorithms.DataStructures
             }
         }
 
+        public T[] GetAllElements()
+        {
+            return _array;
+        }
+        
         IEnumerator IEnumerable.GetEnumerator()
         {
            return GetEnumerator();

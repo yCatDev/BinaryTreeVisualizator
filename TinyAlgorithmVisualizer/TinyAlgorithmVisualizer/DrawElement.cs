@@ -66,6 +66,11 @@ namespace TinyAlgorithmVisualizer
             Core.StartCoroutine(HighlightIt(seconds));
         }
 
+        public void Highlight(Color color)
+        {
+            _outlineRenderer.OutlineColor = color;
+        }
+        
         private IEnumerator HighlightIt(int seconds)
         {
             var col = _outlineRenderer.OutlineColor;
@@ -77,6 +82,11 @@ namespace TinyAlgorithmVisualizer
         public void Update()
         {
             
+        }
+
+        public void SetText(string val)
+        {
+            _textComponent.SetText(val);
         }
     }
 }
