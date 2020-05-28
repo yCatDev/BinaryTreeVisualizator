@@ -60,7 +60,7 @@ namespace TinyAlgorithmVisualizer
             _table.Pack();
             
             _uiHelper.CreateBtn(_table, "Linked list", (btn) =>
-                Core.StartSceneTransition(new FadeTransition(() => new AvlTreeScene())));
+                Core.StartSceneTransition(new FadeTransition(() => new ListScene())));
             _table.Row();
             _table.Pack();
             
