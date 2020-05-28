@@ -21,7 +21,7 @@ namespace TinyAlgorithmVisualizer
         private SpriteOutlineRenderer _outlineRenderer;
         private bool _isCircle;
 
-        public DrawElement(int value, bool isCircle = true)
+        public DrawElement(string value, bool isCircle = true)
         {
             _value = value.ToString();
             _isCircle = isCircle;

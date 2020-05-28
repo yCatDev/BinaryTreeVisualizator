@@ -13,6 +13,7 @@ namespace TinyAlgorithmVisualizer.Algorithms.DataStructures
         private int _tailIndex;
         private int _length;
         
+        public int Count => _length;
 
         public LoopedQueue(int size)
         {

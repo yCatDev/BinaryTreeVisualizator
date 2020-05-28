@@ -638,6 +638,28 @@ namespace TinyAlgorithmVisualizer.Algorithms.Tree
             return next.Left != null ? next.Left.Value : next.Value;
         }
         
+        public void FindLeaves(Action<T> onFind)
+        {
+            FindLeave(Head, onFind);
+        }
+        
+        private void FindLeave(AvlTreeNode<T> node, Action<T> onFind)
+        {
+            if (node==null) 
+                return; 
+            
+            if (node.Left==null && node.Right==null) 
+            { 
+                onFind.Invoke(node.Value);
+                return; 
+            } 
+            
+            if (node.Left != null) 
+                FindLeave(node.Left, onFind); 
+          
+            if (node.Right != null) 
+                FindLeave(node.Right, onFind); 
+        }
         
         //В двоичном дереве поиска найти элемент, предшествующий данному.
         public T FindPrevious(T val)

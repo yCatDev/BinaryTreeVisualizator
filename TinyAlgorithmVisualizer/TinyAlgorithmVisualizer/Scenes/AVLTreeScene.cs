@@ -57,6 +57,9 @@ namespace TinyAlgorithmVisualizer.Scenes
                 case "preorder":
                     HighlightPreoder(field);
                     break;
+                case "leaves":
+                    HighlightLeaves();
+                    break;
                 case "search":
                     if (!IsDigitsOnly(cmd[1])) return;
                     if (_tree.Contains(int.Parse(cmd[1])))
@@ -72,6 +75,11 @@ namespace TinyAlgorithmVisualizer.Scenes
             }
         }
 
+        private void HighlightLeaves()
+        {
+            _tree.FindLeaves((x)=>HighlightElement(x));
+        }
+        
         public void HighlightPreoder(TextField field)
         {
             Core.StartCoroutine(HighlightPreoderBehaviour(field, 1));
@@ -198,7 +206,7 @@ namespace TinyAlgorithmVisualizer.Scenes
         
         private Entity CreateElement(int val)
         {
-            var element = CreateEntity("TreeElement"+val).AddComponent(new DrawElement(val));
+            var element = CreateEntity("TreeElement"+val).AddComponent(new DrawElement(val.ToString()));
             element.Transform.Parent = Domain.Transform;
             element.Transform.LocalPosition = new Vector2(100, -Screen.Height/2 );
             var scaleTo = new Vector2(0.75f, 0.75f);

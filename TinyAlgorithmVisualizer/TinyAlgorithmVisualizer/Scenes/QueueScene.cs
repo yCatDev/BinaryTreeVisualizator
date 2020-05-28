@@ -5,12 +5,14 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Nez;
 using Nez.UI;
+using TinyAlgorithmVisualizer.Algorithms.DataStructures;
 
 namespace TinyAlgorithmVisualizer.Scenes
 {
-    public class StackScene : BasicDemoScene
+    public class QueueScene : BasicDemoScene
     {
-        private Algorithms.DataStructures.Stack<int> _stack;
+
+        private Algorithms.DataStructures.LoopedQueue<int> _queue;
         private List<KeyValuePair<int, Entity>> _drawElements;
         private List<Entity> _lines;
         private bool _prevent = false;
@@ -19,7 +21,7 @@ namespace TinyAlgorithmVisualizer.Scenes
         public override void Initialize()
         {
             base.Initialize();
-            _stack = new Algorithms.DataStructures.Stack<int>();
+            _queue = new Algorithms.DataStructures.LoopedQueue<int>(10);
             _drawElements = new List<KeyValuePair<int, Entity>>();
             _lines = new List<Entity>();
         }
@@ -30,20 +32,25 @@ namespace TinyAlgorithmVisualizer.Scenes
             var cmd = field.GetText().Split(' ');
             switch (cmd[0].ToLower())
             {
+                case "create":
+                    if (!IsDigitsOnly(cmd[1])) return;
+                    CreateQueue(int.Parse(cmd[1]));
+                    break;
                 case "push":
                     if (!IsDigitsOnly(cmd[1])) return;
                     AddElement(int.Parse(cmd[1]));
                     break;
                 case "pop":
-                    if (_stack.IsEmpty)
+                    if (_queue.IsEmpty)
                     {
                         field.SetTextForced("Stack is empty!");
                         break;
                     }
+
                     RemoveElement();
                     break;
                 case "count":
-                    field.SetTextForced($"In stack {_stack.Count} elements");
+                    field.SetTextForced($"In stack {_queue.Count} elements");
                     break;
                 case "menu":
                     Core.StartSceneTransition(new FadeTransition(() => new Menu()));
@@ -54,13 +61,14 @@ namespace TinyAlgorithmVisualizer.Scenes
 
         private void AddElement(int val)
         {
-            _stack.Push(val);
-            CreateElement(val, GetMissingIndex());
+            _queue.Enqueue(val);
+           // CreateElement(val, GetMissingIndex());
             RebuildStructure();
         }
+
         private void RemoveElement()
         {
-            _stack.Pop();
+            _queue.Dequeue();
             //if (!_tree.Contains(value)) return;
             _drawElements[0].Value.Transform.TweenScaleTo(Vector2.Zero, 0.5f).Start();
             _drawElements[0].Value.Destroy(1);
@@ -72,18 +80,43 @@ namespace TinyAlgorithmVisualizer.Scenes
             RebuildStructure();
         }
 
+        private void CreateQueue(int size)
+        {
+            _queue = new LoopedQueue<int>(size);
+            var step = 360 / size;
+            var angle = 0f;
+            for (var i = 0; i < size; i++)
+            {
+                var e = CreateElement("");
+                angle += step;
+                e.SetPosition(SetPositionAround(angle, size*25f));
+            }
+            Core.StartCoroutine(DrawAllLines());
+        }
+
+        private Vector2 SetPositionAround(float angle, float dist)
+        {
+            angle = (float) ((angle ) * (Math.PI/180)); // Convert to radians
+
+            var rotatedX =(float)( Math.Cos(angle) * (0 - 0) - Math.Sin(angle) * (dist-0) + 0);
+
+            var rotatedY = (float)( Math.Sin(angle) * (0 - 0) + Math.Cos(angle) * (dist - 0) + 0);
+            
+            return new Vector2(rotatedX,rotatedY);
+        }
+        
         private int GetMissingIndex()
         {
-            var tmp = _stack.ToArray();
+            var tmp = _queue.ToArray();
             for (int i = 0; i < tmp.Length; i++)
             {
-                if ( i>_drawElements.Count-1|| _drawElements[i].Key != tmp[i])
+                if (i > _drawElements.Count - 1 || _drawElements[i].Key != tmp[i])
                     return i;
             }
 
             return tmp.Length - 1;
         }
-        
+
         private void RemoveAllLines()
         {
             foreach (var element in _lines)
@@ -97,65 +130,58 @@ namespace TinyAlgorithmVisualizer.Scenes
         private IEnumerator DrawAllLines()
         {
             yield return Coroutine.WaitForSeconds(0.5f);
-            Entity last = default;
-            foreach (var item in _drawElements)
+            for (var i = 1; i < _drawElements.Count; i++)
             {
-                if (last == null)
-                {
-                    last = item.Value;
-                    continue;
-                }
+                var current = _drawElements[i];
+                var prev = _drawElements[i - 1];
+                    
                 var lineEntity = CreateEntity("Line", new Vector2(Screen.Width / 2f, Screen.Height / 2f));
                 // lineEntity.Transform.Parent = _domain.Transform;
                 lineEntity.LocalPosition = Vector2.Zero;
                 var line = lineEntity.AddComponent<LineRenderer>();
                 line.LayerDepth = 1;
                 line.RenderLayer = 999;
+                
 
-                //line.SetUseWorldSpace(false);
-
-                var from = last.Position;
-                var to = item.Value.Position;
+                var from = prev.Value.Position;
+                var to = current.Value.Position;
 
 
-                line.AddPoint(from, 3);
+                line.AddPoint(@from, 3);
                 line.AddPoint(to, 3);
-
-                //line.SetStartEndColors(new Color(61, 9, 107),new Color(61, 9, 107));
-
-                //Console.WriteLine($"{v} {parent.Value}");
+                
                 _lines.Add(lineEntity);
             }
         }
 
-        private Entity CreateElement(int val, int i)
+        private Entity CreateElement(string val)
         {
-            var element = CreateEntity("StackElement" + val).AddComponent(new DrawElement(val.ToString(), false));
+            var element = CreateEntity("StackElement" + val).AddComponent(new DrawElement(val, false));
             element.Transform.Parent = Domain.Transform;
             element.Transform.LocalPosition = new Vector2(100, -Screen.Height / 2f);
             var scaleTo = new Vector2(0.75f, 0.75f);
             element.Transform.Scale = Vector2.Zero;
             element.Transform.TweenScaleTo(scaleTo, 0.5f).Start();
 
-
-            _drawElements.Insert(i, new KeyValuePair<int,Entity>(val, element.Entity));
+            if (!string.IsNullOrEmpty(val))
+                _drawElements.Add(new KeyValuePair<int, Entity>(int.Parse(val), element.Entity));
 
             return element.Entity;
         }
 
         private void RebuildStructure()
         {
-           
+
             RemoveAllLines();
-            var tmp = _stack.ToArray();
+            var tmp = _queue.ToArray();
             for (int i = 0; i < tmp.Length; i++)
             {
                 //Console.WriteLine(tmp[i]);
-                
+
                 var current = _drawElements[i].Value;
                 //current = !_drawElements.ContainsKey(v) ?  : _drawElements[v];
-                current.Transform.TweenLocalPositionTo(new Vector2(0, i*100), 0.5f).Start();
-            } 
+                current.Transform.TweenLocalPositionTo(new Vector2(0, i * 100), 0.5f).Start();
+            }
 
             //Малюємо звязуючи лінії
             Core.StartCoroutine(DrawAllLines());
@@ -163,4 +189,5 @@ namespace TinyAlgorithmVisualizer.Scenes
             //Domain.Position = new Vector2(Screen.Width / 2f - (tmp.Length * 50), Screen.Height / 2f);
         }
     }
+
 }

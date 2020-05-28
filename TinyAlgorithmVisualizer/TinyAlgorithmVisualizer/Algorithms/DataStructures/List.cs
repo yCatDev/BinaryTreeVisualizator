@@ -62,8 +62,7 @@ namespace TinyAlgorithmVisualizer.Algorithms.DataStructures
             }
             else AddToFront(item, node.Previous);
         }
-
-
+        
         public void AddToEnd(T item)
         {
             if (CheckSelf(item)) return;

@@ -55,7 +55,7 @@ namespace TinyAlgorithmVisualizer
             _table.Row();
             
             _uiHelper.CreateBtn(_table, "Looped queue", (btn) =>
-                Core.StartSceneTransition(new FadeTransition(() => new AvlTreeScene())));
+                Core.StartSceneTransition(new FadeTransition(() => new QueueScene())));
             _table.Row();
             _table.Pack();
             

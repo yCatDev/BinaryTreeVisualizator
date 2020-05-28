@@ -65,6 +65,9 @@ namespace TinyAlgorithmVisualizer.Scenes
                 case "preorder":
                     HighlightPreoder(field);
                     break;
+                case "leaves":
+                    HighlightLeaves();
+                    break;
                 case "menu":
                     Core.StartSceneTransition(new FadeTransition(() => new Menu()));
                     _prevent = true;
@@ -72,6 +75,11 @@ namespace TinyAlgorithmVisualizer.Scenes
             }
         }
 
+
+        private void HighlightLeaves()
+        {
+            _tree.FindLeaves((x)=>HighlightElement(x));
+        }
 
         public void HighlightPreoder(TextField field)
         {
@@ -194,7 +202,7 @@ namespace TinyAlgorithmVisualizer.Scenes
         
         private Entity CreateElement(int val)
         {
-            var element = CreateEntity("TreeElement"+val).AddComponent(new DrawElement(val));
+            var element = CreateEntity("TreeElement"+val).AddComponent(new DrawElement(val.ToString()));
             element.Transform.Parent = Domain.Transform;
             element.Transform.LocalPosition = new Vector2(100, -Screen.Height/2 );
             var scaleTo = new Vector2(0.75f, 0.75f);

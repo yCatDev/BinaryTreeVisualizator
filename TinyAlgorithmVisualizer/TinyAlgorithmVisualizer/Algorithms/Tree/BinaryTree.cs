@@ -120,7 +120,31 @@ namespace TinyAlgorithmVisualizer.Algorithms.Tree
                 return (lDepth + 1); 
             else
                 return (rDepth + 1);
-        } 
+        }
+
+        public void FindLeaves(Action<T> onFind)
+        {
+            FindLeave(_head, onFind);
+        }
+
+        private void FindLeave(BinaryTreeNode<T> node, Action<T> onFind)
+        {
+            if (node==null) 
+                return; 
+      
+          
+            if (node.Left==null && node.Right==null) 
+            { 
+                onFind.Invoke(node.Value);
+                return; 
+            } 
+  
+            if (node.Left != null) 
+                FindLeave(node.Left, onFind); 
+            
+            if (node.Right != null) 
+                FindLeave(node.Right, onFind); 
+        }
         
         public bool Remove(T value)
         {

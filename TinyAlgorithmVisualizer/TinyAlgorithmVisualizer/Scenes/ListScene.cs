@@ -188,7 +188,7 @@ namespace TinyAlgorithmVisualizer.Scenes
 
         private Entity CreateElement(int val, int i)
         {
-            var element = CreateEntity("StackElement" + val).AddComponent(new DrawElement(val, false));
+            var element = CreateEntity("StackElement" + val).AddComponent(new DrawElement(val.ToString(), false));
             element.Transform.Parent = Domain.Transform;
             element.Transform.LocalPosition = new Vector2(100, -Screen.Height / 2f);
             var scaleTo = new Vector2(0.75f, 0.75f);
