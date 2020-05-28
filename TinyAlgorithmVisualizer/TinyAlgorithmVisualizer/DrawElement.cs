@@ -8,7 +8,7 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace TinyAlgorithmVisualizer
 {
-    public class TreeElement: Component, IUpdatable
+    public class DrawElement: Component, IUpdatable
     {
 
         private readonly string _value;
@@ -20,7 +20,7 @@ namespace TinyAlgorithmVisualizer
         private TextComponent _textComponent;
         private SpriteOutlineRenderer _outlineRenderer;
 
-        public TreeElement(int value)
+        public DrawElement(int value)
         {
             _value = value.ToString();
         }
@@ -48,13 +48,13 @@ namespace TinyAlgorithmVisualizer
             _textComponent.SetFont(Entity.Scene.Content.Load<IFont>(Content.DefaultTitleFont));
             _textComponent.VerticalOrigin = VerticalAlign.Center;
             _textComponent.HorizontalOrigin = HorizontalAlign.Center;
+  
             _textComponent.Text = _value;
             _textComponent.LayerDepth = 0;
             _textComponent.Color = Color.Black;
             _textComponent.Transform.SetScale(0.5f);
             _textComponent.Transform.Parent = Entity.Transform;
-            _textComponent.Transform.LocalPosition  = new Vector2(_spriteRenderer.Bounds.Width/6f-_textComponent.Bounds.Width
-                ,_spriteRenderer.Bounds.Height/2f-_textComponent.Bounds.Height);
+            //_textComponent.Transform.LocalPosition = new Vector2(0, 0);
             //_textComponent.Transform.LocalPosition = Vector2.Zero;
 
 

@@ -96,7 +96,7 @@ namespace TinyAlgorithmVisualizer.Scenes
         public void HighlightElement(int value, int seconds = 3)
         {
             if (_treeElements.ContainsKey(value))
-                _treeElements[value].GetComponent<TreeElement>().Highlight(seconds);
+                _treeElements[value].GetComponent<DrawElement>().Highlight(seconds);
         }
         
         private void ClearTree()
@@ -141,8 +141,9 @@ namespace TinyAlgorithmVisualizer.Scenes
             _tree.Add(value);
             RebuildTree(true);
         }
-        LineRenderer line;
-        Entity lineEntity;
+
+        private LineRenderer line;
+        private Entity lineEntity;
         private bool _prevent;
 
         private void RebuildTree(bool afterAdding)
@@ -197,7 +198,7 @@ namespace TinyAlgorithmVisualizer.Scenes
         
         private Entity CreateElement(int val)
         {
-            var element = CreateEntity("TreeElement"+val).AddComponent(new TreeElement(val));
+            var element = CreateEntity("TreeElement"+val).AddComponent(new DrawElement(val));
             element.Transform.Parent = Domain.Transform;
             element.Transform.LocalPosition = new Vector2(100, -Screen.Height/2 );
             var scaleTo = new Vector2(0.75f, 0.75f);
