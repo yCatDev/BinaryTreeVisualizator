@@ -42,9 +42,17 @@ namespace TinyAlgorithmVisualizer
             _table.Pack();
             
             
-            
-            
-            
+            _uiHelper.CreateRegularLabel(_table, "Greedy").SetAlignment(Align.Left);;
+            _uiHelper.CreateVerticalIndent(_table, 200);
+            _table.Row();
+
+           
+            _uiHelper.CreateBtn(_table, "Huffman", (btn) =>
+                Core.StartSceneTransition(new FadeTransition(() => new HuffmanScene())));
+            _table.Row();
+
+
+
             _uiHelper.CreateRegularLabel(_table, "Data structures visualizer").SetAlignment(Align.Left);;
             _uiHelper.CreateVerticalIndent(_table, 200);
             _table.Row();

@@ -26,6 +26,7 @@ namespace TinyAlgorithmVisualizer.Scenes
             Domain.Position = new Vector2(Screen.Width/2f, Screen.Height/2f);
             Camera.Entity.AddComponent<ViewController>();
             ClearColor = Color.Black;
+            AfterStartup();    
         }
         
         public static bool IsDigitsOnly(string str)

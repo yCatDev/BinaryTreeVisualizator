@@ -9,6 +9,16 @@ namespace TinyAlgorithmVisualizer.Algorithms.Tree
         private BinaryTreeNode<T> _head;
         private int _count;
 
+        public BinaryTree()
+        {
+            
+        }
+
+        public BinaryTree(BinaryTreeNode<T> root)
+        {
+            _head = root;
+        }
+        
         public void Add(T value)
         {
             // Случай 1: Если дерево пустое, просто создаем корневой узел.
