@@ -119,6 +119,7 @@ namespace TinyAlgorithmVisualizer.Algorithms.Greedy
         public HuffmanTreeNode Build(List<HuffmanTreeNode> t)
         {
             var tree = new HuffmanTree();
+            var len = t.Count;
             // создание дерева
             while (t.Count != 1) // пока в дереве более одного элемента
             {
@@ -142,6 +143,7 @@ namespace TinyAlgorithmVisualizer.Algorithms.Greedy
 
             // последний оставшийся в списке - корень дерева
             HuffmanTreeNode root = t[0];
+            root.Length = len;
             return root;
         }
 

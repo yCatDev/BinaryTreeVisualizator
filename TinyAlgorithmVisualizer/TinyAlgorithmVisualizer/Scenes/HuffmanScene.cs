@@ -57,15 +57,15 @@ namespace TinyAlgorithmVisualizer.Scenes
                 var current = CreateElement(v);
                 //Запускаємо переміщення ноди в нову позицію
                 current.Transform.TweenLocalPositionTo(new Vector2(x * 50, y * 50), 0.5f).Start();
-            }, 10); //Викликаємо відрисовку*/
+            }, _tree.Length); //Викликаємо відрисовку*/
 
             //Малюємо звязуючи лінії
-            //Core.StartCoroutine(DrawAllLines());
+            Core.StartCoroutine(DrawAllLines());
             //Центруємо дерево на єкрані
             //Domain.Position = new Vector2(Screen.Width / 2f - (_tree.Count * 50), Screen.Height / 2f);
         }
 
-        /*private IEnumerator DrawAllLines()
+        private IEnumerator DrawAllLines()
         {
             
             yield return Coroutine.WaitForSeconds(0.5f);
@@ -84,7 +84,7 @@ namespace TinyAlgorithmVisualizer.Scenes
                     //line.SetUseWorldSpace(false);
 
                     var from = _treeElements[item.Key].Position;
-                    var to = _treeElements[parent.Value].Position;
+                    var to = _treeElements[parent.value].Position;
                    
 
                     line.AddPoint(from, 3);
@@ -96,7 +96,7 @@ namespace TinyAlgorithmVisualizer.Scenes
                     _lines.Add(lineEntity);
                 }
             }
-        }*/
+        }
         
         private Entity CreateElement(string val)
         {

@@ -8,9 +8,10 @@ namespace TinyAlgorithmVisualizer.Algorithms.DataStructures
     {
         public int weight;
         public char c;
-        private string value;
+        public string value;
         public HuffmanTreeNode Left;
         public HuffmanTreeNode Right;
+        public int Length;
 
         public string GetValue() => value;
        
@@ -33,20 +34,9 @@ namespace TinyAlgorithmVisualizer.Algorithms.DataStructures
         {
             this.value = value;
         }
-
-        public void PreOrder(System.Action<string> action)
-        {
-            PreOrder(action, this);
-        }
         
-        private void PreOrder(System.Action<string> action, HuffmanTreeNode node)
-        {
-            if (node == null) return; //Вихід із рекурсії
-            
-            action(node.c == '\0' ? $"{node.weight}" : $"{node.c} ({node.weight})");
-            PreOrder(action, node.Left); //Пошук зліва 
-            PreOrder(action, node.Right); //Пошук справа
-        }
+       
+        
         public void Draw(Action<int, int, string> onDraw, int x = 0)
         {
             DrawElement(onDraw, x, 0, this);
@@ -58,7 +48,8 @@ namespace TinyAlgorithmVisualizer.Algorithms.DataStructures
             if (node == null) return;
             
             if (delta == 0) delta = x / 2;
-            onDraw(x, y, node.c == '\0' ? $"{node.weight}" : $"{node.c} ({node.weight})"); 
+            value = node.c == '\0' ? $"{node.weight}" : $"{node.c} ({node.weight})";
+            onDraw(x, y, value); 
             DrawElement(onDraw, x - delta, y + 3, node.Left, delta / 2); 
             DrawElement(onDraw, x + delta, y + 3, node.Right, delta / 2);
         }
@@ -134,56 +125,6 @@ namespace TinyAlgorithmVisualizer.Algorithms.DataStructures
                 {
                     // в противном случае повторяем для правого поддерева.
                     return AddTo(node.Right, value, side);
-                }
-            }
-        }
-        public void AddNode(HuffmanTreeNode node, int side)
-        {
-            // Случай 1: Если дерево пустое, просто создаем корневой узел.
-            if (_head == null)
-            {
-                _head = node;
-                
-            }
-            // Случай 2: Дерево не пустое => 
-            // ищем правильное место для вставки.
-            else
-            {
-                AddNodeTo(_head, node, side);
-            }
-        }
-        // Рекурсивная ставка.
-        private void AddNodeTo(HuffmanTreeNode current, HuffmanTreeNode node, int side)
-        {
-            // Случай 1: Вставляемое значение меньше значения узла
-            if (side < 0)
-            {
-                // Если нет левого поддерева, добавляем значение в левого ребенка,
-                if (current.Left == null)
-                {
-                    current.Left = node;
-                    Count++;
-
-                }
-                else
-                {
-                    // в противном случае повторяем для левого поддерева.
-                    AddNodeTo(current.Left, node, side);
-                }
-            }
-            // Случай 2: Вставляемое значение больше или равно значению узла.
-            else
-            {
-                // Если нет правого поддерева, добавляем значение в правого ребенка,
-                if (current.Right == null)
-                {
-                    current.Right =node;
-                    Count++;
-                }
-                else
-                {
-                    // в противном случае повторяем для правого поддерева.
-                    AddNodeTo(current.Right, node, side);
                 }
             }
         }
