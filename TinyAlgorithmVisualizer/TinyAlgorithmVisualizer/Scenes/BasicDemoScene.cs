@@ -19,7 +19,7 @@ namespace TinyAlgorithmVisualizer.Scenes
             UiHelper = new GameUIHelper(this.Content);
             var ui = CreateEntity("UI").AddComponent<UICanvas>();
             ui.RenderLayer = 9990;
-            var input = ui.Stage.AddElement(UiHelper.CreateInputField("Enter command", OnCommandEnter));
+            var input = ui.Stage.AddElement(UiHelper.CreateInputField("Enter text", OnCommandEnter));
             
 
             Domain = CreateEntity("Domain");

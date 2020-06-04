@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Nez;
 using Nez.UI;
@@ -13,7 +15,8 @@ namespace TinyAlgorithmVisualizer.Scenes
     {
         private Huffman _huffman;
         private HuffmanTreeNode _tree;
-        private Dictionary<string, Entity> _treeElements;
+        private List<KeyValuePair<string, Entity>> _treeElements;
+        private Dictionary<string, int> _garbage = new Dictionary<string, int>();
         private List<Entity> _lines;
 
         protected override void AfterStartup()
@@ -21,7 +24,7 @@ namespace TinyAlgorithmVisualizer.Scenes
             base.AfterStartup();
 
             _lines = new List<Entity>();
-            _treeElements = new Dictionary<string, Entity>();
+            _treeElements = new List<KeyValuePair<string, Entity>>();
             _huffman = new Huffman();
         }
 
@@ -49,66 +52,102 @@ namespace TinyAlgorithmVisualizer.Scenes
              * Отже потрібно створити словник який матиме в ключах значення дерева а в значеннях - об'екти
              */
             RemoveAllLines(); //Видаляємо всі лінії
-            
-            
-            _tree.Draw((x, y, v) =>
+            foreach (var item in _treeElements)
+            {
+                item.Value.Destroy();
+            }
+            _garbage.Clear();
+            Console.WriteLine("==========");
+            var t = 0;
+            _tree.Draw((x, y, v,oldv) =>
             {
                 //Якщо в словнику є елемент з таким значенням то використовуємо його якщо ж ні створюємо новий 
                 var current = CreateElement(v);
                 //Запускаємо переміщення ноди в нову позицію
                 current.Transform.TweenLocalPositionTo(new Vector2(x * 50, y * 50), 0.5f).Start();
-            }, _tree.Length); //Викликаємо відрисовку*/
+                Entity elem = current, parent = null;
 
-            //Малюємо звязуючи лінії
-            Core.StartCoroutine(DrawAllLines());
-            //Центруємо дерево на єкрані
-            //Domain.Position = new Vector2(Screen.Width / 2f - (_tree.Count * 50), Screen.Height / 2f);
+                
+
+                if (oldv != null && _treeElements.FirstOrDefault(e=>e.Key==oldv).Value!=null)
+                {
+                    parent = _treeElements.FirstOrDefault(e=>e.Key==oldv).Value;
+                    var f = _garbage.TryGetValue(parent.Name, out var res);
+                    /*if (f)
+                        Console.WriteLine($"{parent.Name} {res}");*/
+                    if (_garbage.ContainsKey(parent.Name))
+                    {
+                        _garbage[parent.Name]++;
+                    }else  _garbage.Add(parent.Name, 1);
+                }
+
+                Core.StartCoroutine(DrawLine(elem, parent, t++));
+            }, _tree.Length*2); //Викликаємо відрисовку*/
+            
+            _tree = new HuffmanTreeNode();
         }
 
-        private IEnumerator DrawAllLines()
+        private void Remove(string name)
         {
-            
-            yield return Coroutine.WaitForSeconds(0.5f);
-            foreach (var item in _treeElements)
+            for (int i = 0; i < _treeElements.Count; i++)
             {
-                var elem = _tree.FindWithParent(item.Key, out var parent);
-                if (elem != null && parent != null)
+                var item = _treeElements[i];
+                if (item.Value.Name == name)
                 {
-                    var lineEntity = CreateEntity("Line", new Vector2(Screen.Width / 2f, Screen.Height / 2f));
-                    // lineEntity.Transform.Parent = _domain.Transform;
-                    lineEntity.LocalPosition = Vector2.Zero;
-                    var line = lineEntity.AddComponent<LineRenderer>();
-                    line.LayerDepth = 1;
-                    line.RenderLayer = 999;
-
-                    //line.SetUseWorldSpace(false);
-
-                    var from = _treeElements[item.Key].Position;
-                    var to = _treeElements[parent.value].Position;
-                   
-
-                    line.AddPoint(from, 3);
-                    line.AddPoint(to, 3);
-
-                    //line.SetStartEndColors(new Color(61, 9, 107),new Color(61, 9, 107));
-                   
-                    //Console.WriteLine($"{v} {parent.Value}");
-                    _lines.Add(lineEntity);
+                    _treeElements[i]=new KeyValuePair<string, Entity>("",item.Value);
+                    //Console.WriteLine("Removed " + item.Value.Name);
+                    break;
                 }
             }
         }
-        
+
+        private IEnumerator DrawLine(Entity elem, Entity parent, int t)
+        {
+            if (elem != null && parent != null)
+            {
+                //Console.WriteLine($"Connect {elem.Name} with {parent.Name}");
+                var parentPos = new Vector2(parent.Position.X, parent.Position.Y);
+                if (_garbage.ContainsKey(parent.Name) && _garbage[parent.Name] > 1)
+                    Remove(parent.Name);
+                yield return Coroutine.WaitForSeconds(0.5f /*+ (t * 0.5f)*/);
+
+                var lineEntity = CreateEntity("Line", new Vector2(Screen.Width / 2f, Screen.Height / 2f));
+                // lineEntity.Transform.Parent = _domain.Transform;
+                lineEntity.LocalPosition = Vector2.Zero;
+                var line = lineEntity.AddComponent<LineRenderer>();
+                line.LayerDepth = 1;
+                line.RenderLayer = 999;
+
+                //line.SetUseWorldSpace(false);
+
+                var from = elem.Position;
+                var to = parent.Position;
+
+
+                line.AddPoint(from, 3);
+                line.AddPoint(to, 3);
+
+                //line.SetStartEndColors(new Color(61, 9, 107),new Color(61, 9, 107));
+
+                //Console.WriteLine($"{v} {parent.Value}");
+                _lines.Add(lineEntity);
+
+            }
+        }
+
+
+        private int id = 0;
         private Entity CreateElement(string val)
         {
-            var element = CreateEntity("TreeElement"+val).AddComponent(new DrawElement(val.ToString()));
+            var element = CreateEntity("TreeElement"+id.ToString()).AddComponent(new DrawElement(val.ToString()));
+            id++;
             element.Transform.Parent = Domain.Transform;
             element.Transform.LocalPosition = new Vector2(100, -Screen.Height/2 );
             var scaleTo = new Vector2(0.75f, 0.75f);
             element.Transform.Scale = Vector2.Zero;
             element.Transform.TweenScaleTo(scaleTo, 0.5f).Start();
-            
-            if (!_treeElements.ContainsKey(val))
-                _treeElements.Add(val, element.Entity);
+                
+            _treeElements.Add(new KeyValuePair<string,Entity>(val, element.Entity));
             
             return element.Entity;
         }
